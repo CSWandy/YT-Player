@@ -20,16 +20,9 @@ const Header = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        (token == null)?
-        setLayout(prev => ({...prev, loggedIn:false}))
-        :setLayout(prev => ({...prev, loggedIn:true}));
-    },[]);
-   
-    useEffect(() => {
-        if (!loggedIn) {
-            setLayout(prev => ({...prev, loggedIn:false}));
-            setLayout(prev => ({...prev, loggedIn:true}));
-        }
+        (token !== '')?
+        setLayout(prev => ({...prev, loggedIn:true}))
+        :setLayout(prev => ({...prev, loggedIn:false}));
     },[menuActive]);
 
     const handleSubmit = e => {
