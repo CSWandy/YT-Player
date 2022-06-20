@@ -20,11 +20,14 @@ const Header = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        (token !== '')?
-        setLayout(prev => ({...prev, loggedIn:true}))
-        :setLayout(prev => ({...prev, loggedIn:false}));
+        if (token !== '') {
+            setLayout(prev => ({...prev, loggedIn:true}));
+        } else {
+            setLayout(prev => ({...prev, loggedIn:true}));   
+            setLayout(prev => ({...prev, loggedIn:false}));
+        }
     },[menuActive]);
-    
+
     const handleSubmit = e => {
         e.preventDefault();
         window.scrollTo(0, 0);
