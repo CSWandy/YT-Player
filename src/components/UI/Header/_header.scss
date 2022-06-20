@@ -157,7 +157,7 @@
       
       &-enter-active {
          display: block;
-         animation: appear 2s ease 2 alternate;
+         animation: appear 1s ease 2 alternate;
          @keyframes appear {
             from {
                opacity: 0;

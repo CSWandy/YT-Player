@@ -14,17 +14,19 @@ import './_header.scss';
 const Header = () => {
 
     const [input, setInput] = useState('');
+    const fireModal = useRef(false);
     const {layout: {menuActive, sideBarOpen, loggedIn}, setLayout} = useContext(LayoutContext);
     const transitionNodeRef = useRef();
     const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (token !== '') {
-            setLayout(prev => ({...prev, loggedIn:true}));
-        } else {
-            setLayout(prev => ({...prev, loggedIn:true}));   
+        if (token === '') {   
             setLayout(prev => ({...prev, loggedIn:false}));
+            fireModal.current = true;
+        } else {
+        setLayout(prev => ({...prev, loggedIn:true}));
+        fireModal.current = false;
         }
     },[menuActive]);
 
@@ -36,7 +38,7 @@ const Header = () => {
     };
 
     const sidebarHandler = () =>
-    setLayout(prev =>  ({...prev, sideBarOpen:!sideBarOpen} ));
+        setLayout(prev =>  ({...prev, sideBarOpen:!sideBarOpen} ));
 
     const logOutHandler = () => {
         localStorage.setItem('token','');
@@ -91,7 +93,12 @@ const Header = () => {
                 </div>
                 )}
             </header>
-            <CSSTransition in={!loggedIn} timeout={4000} appear classNames="login_modal_transition" nodeRef={transitionNodeRef}>   
+            <CSSTransition  in={fireModal.current} 
+                            timeout={2000} 
+                            appear 
+                            classNames="login_modal_transition" 
+                            nodeRef={transitionNodeRef}
+                            onEntered={() => {fireModal.current = false}}>   
                     <span ref={transitionNodeRef}  className="login_modal">
                         Please, sign in
                     </span>      
