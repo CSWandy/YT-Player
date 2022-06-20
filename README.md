@@ -1,4 +1,4 @@
-# Youtue API minimal interface wrapper
+# Youtue API clean interface wrapper
 
 Clean interface for exploring Youtube search, playlists, channels, videos demo-project.
 
