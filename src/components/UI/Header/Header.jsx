@@ -24,7 +24,7 @@ const Header = () => {
         setLayout(prev => ({...prev, loggedIn:true}))
         :setLayout(prev => ({...prev, loggedIn:false}));
     },[menuActive]);
-
+    
     const handleSubmit = e => {
         e.preventDefault();
         window.scrollTo(0, 0);

@@ -2,9 +2,9 @@ import {createContext, useState} from 'react';
 
 const initialState = {
     menuActive:'',
-    sideBarOpen:false,
-    plDropDownOpen:false,
-    loggedIn:false,
+    sideBarOpen: true,
+    plDropDownOpen: false,
+    loggedIn: false,
 };
 
 export const LayoutContext = createContext(initialState);
