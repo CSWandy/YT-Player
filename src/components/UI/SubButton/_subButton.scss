@@ -1,0 +1,12 @@
+@import '../../styles/main';
+
+.channel_subscribe_button {
+    margin-top: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    background-color: $text-color;
+    color: $black-primary;
+    font-size: 20px;
+    padding: 10px 15px;
+    border: none;
+}

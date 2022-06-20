@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+@font-face {
+  font-family: GOST_A;
+  src: url("./fonts/GOST_A.woff2") format("woff2");
+  font-weight: regular;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Redacted-script;
+  src: url('./fonts/redacted-script-regular.woff2') format("woff2");
+  font-weight: regular;
+ }
+
+ @font-face {
+  font-family: Redacted-script;
+  src: url('./fonts/redacted-script-light.woff2') format("woff2");
+  font-weight: light;
+ }
+
+ @font-face {
+  font-family: Cooper-black;
+  src: url('./fonts/Cooper-black.woff') format("woff");
+  font-weight: light;
+ }

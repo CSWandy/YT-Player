@@ -1,0 +1,41 @@
+@import '../../styles/main';
+
+.horizontal_thumbnail_mini {
+   padding: 10px 0;
+   background-color: $black-secondary; 
+   display: flex;
+   border-bottom: 1px rgb(43, 43, 43) solid;
+   
+   &_image {
+      &_playlist,
+      &_channel {
+         cursor: pointer;
+         flex-shrink: 0;
+         padding: 5px 0;   
+         object-fit: cover;
+         height: 50px;
+         width:  50px;
+         clip-path: ellipse(25px 25px);
+      }
+
+   }
+   
+   &_description {
+      &_title {
+         margin: 0;
+         padding: 0 0 0 10px;
+         display: grid;
+         place-content: center;
+         font-size: 18px;
+         
+      }
+   }
+}
+
+/* 
+@media (max-width: $breakpoint-medium) {
+   .horizontal_thumbnail {
+      background-color: red;
+   }
+}
+ */

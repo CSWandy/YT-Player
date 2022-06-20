@@ -1,0 +1,60 @@
+@import '../../styles/main';
+
+.player_comments_list_item {
+    display: flex;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgb(13, 13, 13);
+    min-height: 90px;
+    
+    &_side {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; 
+        align-items: flex-start;
+
+        &_image {
+            margin: 5px 0;
+            width: 48px;
+            height: 48px;
+            clip-path: ellipse(24px 24px);
+        }
+        
+        &_likes {
+            padding-left: 5px;
+            font-size: 15px;
+            color: rgb(184, 184, 184);
+        }   
+    }
+
+    &_body {
+        padding: 0 0 0 12px;
+        display: flex;
+        flex-direction: column;
+
+        &_title {
+            // font-family: Cooper-black, GOST_A;
+            font-size: 19px;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        &_stats {
+            padding: 0 3px;
+            font-size: 12px;
+            color: rgb(184, 184, 184);
+        }
+
+        &_text {
+            font-family: Roboto; 
+            margin: 0;
+            color: rgb(201, 201, 201);
+            padding: 8px 0;
+            font-size: 15px;
+        }
+
+        &_replies {
+
+        }
+    }
+}

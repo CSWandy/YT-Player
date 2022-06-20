@@ -1,0 +1,29 @@
+@import '../../styles/main';
+
+.channel_screen_header {
+    display: flex;
+    border-bottom: 1px inset $text-color;
+    padding: 25px;
+
+    &_logo {
+        width:  160px;
+        height: 160px;
+        border-radius: 50%;
+    }
+
+    &_description {
+        padding: 20px;
+
+        &_text {        
+            &_title {
+                margin: 0;
+                padding: 0;
+            }
+            
+            &_stats {
+                padding: 5px;
+            }
+        }
+    }
+}
+ 

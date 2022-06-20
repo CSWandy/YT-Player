@@ -1,0 +1,121 @@
+@import '../../styles/main';
+
+$fadeTime: 500ms;
+
+.sidebar {
+   display: flex;
+   flex-direction: column;
+   background: $black-secondary;
+   
+   width: 245px;
+   height: 100vh;
+   padding-top: 20px;
+   
+   position: fixed;
+   top: 45px;
+   left: 0;   
+   z-index: 99;
+
+   opacity: 0;
+   visibility: hidden;
+   transition: opacity $fadeTime linear, visibility 0s linear $fadeTime ;
+   
+   &_open {  
+      opacity: 1;
+      visibility: visible;
+      transition: opacity $fadeTime ease-in, visibility 0s linear 0s ;
+   }
+
+   &_item {
+      display: flex;
+      align-items: center;
+      margin: 3px 0;
+
+      font-size: 33px;
+      color: $text-color;
+      text-decoration: none;
+      cursor: pointer;
+
+      &_logo {
+         margin: 10px 0 10px 24px;
+      }
+
+      &_text {
+         text-decoration: underline;
+         display: flex;
+         justify-content: space-between;
+         flex: 1;
+         padding: 10px 0 10px 5px;
+         margin-left: 15px;
+         letter-spacing: 0.4px;
+      }
+
+      &_dropdown {
+         background: no-repeat url(./../../../icons/png/expand_single.png) 50% 55%;
+         background-size: 17px;
+         display: grid;
+         place-content: center;
+         height: 100%;
+         width: 57px;
+         font-size: 30px;
+         
+         &:hover {
+            background-color: rgb(10, 10, 10);
+      }
+
+      &_list {
+         padding: 5px 10px 10px 10px;
+         
+         &_filter {
+            min-width: 80%;
+            max-width: 100%;
+            color: $text-color;
+            font-size: 17px;
+            background-color: $black-primary;
+            border: rgb(87, 87, 87) solid 1px;
+         }
+      }
+
+   }
+
+      &:hover {
+         background-color: $border-color;
+         color: $black-secondary;
+         text-decoration: none;
+         
+         .sidebar_item_dropdown {
+            filter: invert(99%);
+         }
+      }
+   }
+}
+
+@media (max-width: 1100px) {
+   .sidebar {     
+      width: 220px;
+   
+      &_item {
+         margin: 0;
+         font-size: 30px;
+
+         &_logo {
+            margin: 10px 0 10px 18px;
+         }
+
+         &_text {
+            margin-left: 10px;
+         }
+   
+         &_dropdown {
+            background-size: 15px;
+            width: 54px;
+         }
+      }
+   }
+}
+
+@media (max-width: 768px) {
+   .sidebar {     
+      border-right: 7px rgb(0, 0, 0) solid;
+   }
+}

@@ -1,0 +1,256 @@
+@import '../../styles/main';
+
+.header {
+   display: grid;
+   grid-template-columns: repeat(3, minmax(0, 1fr));
+   place-content: center; 
+   align-items: center;
+   column-gap: 20px;
+
+   height: 55px;
+   width: 100%;
+   min-width: 350px;
+   background-color: $black-primary;
+
+   position: fixed;
+   top: 0;
+   z-index: 999;
+
+   &_left {
+      display: flex;
+      padding: 0;
+      padding-left: 25px;
+      justify-self: start;
+      width: 100%;
+
+      &_logo {  
+         cursor: pointer;
+         margin: auto;
+         height: 50px;
+         width: 50px;
+
+      }
+
+      &_title {
+         padding: 15px;
+         padding-right: 0;
+         flex: 1;
+         font-size: 35px;
+         white-space: nowrap;
+         overflow: hidden;
+         text-overflow: ellipsis;
+      }
+}
+
+   &_center {
+      max-width: 500px;
+      width: 100%;
+      justify-self: center;
+      
+      display: flex;
+      justify-content: space-between;
+      padding: 2px;
+      border: 1.2px solid;
+      border-radius: 14px;
+      background-color: $black-secondary;
+
+      &_input {
+         border: none;
+         font-size: 19px;
+         background: transparent;
+         line-height: 25px;
+         padding: 1px 15px;
+         color: $text-color;
+
+         &:focus {
+            outline: none;
+         }
+      }
+
+      &_submit {
+         display: grid;
+         align-items: center;
+         flex: 0;
+         padding: 0 1.25rem;
+         color: $text-color;
+         background: transparent;
+         border: none;
+         &:focus {
+            border: none;
+         }
+      }
+   }
+
+   &_right {
+      display: flex;
+      justify-content: flex-end;
+      width: auto;
+       
+      * {
+         cursor: pointer;
+      }
+
+      &_text { 
+         color: $text-color;
+         text-decoration: none;
+         padding-right: 3px;
+         font-size: 18px;  
+         height: 100%;
+         line-height: 75px;
+         white-space: nowrap;
+      }
+      
+      &_logo {
+         display: grid;
+         place-content: center;
+         width: 30px;
+      }
+   }
+
+   &_popup {
+      position: absolute;
+      right: 0;
+      bottom: -40px;
+      
+      padding: 11px;
+      background-color: black;
+      font-family: Cooper-black;
+      font-size: 16px;
+      animation: blink 5s ease infinite;
+
+      @keyframes blink {
+         from {
+            opacity: 0;
+         }
+         50% {
+            opacity: 1;
+         }
+         to {
+            opacity: 0;
+         }
+      }
+   }
+}
+
+.login_modal {
+   position: fixed;
+   left: 50%;
+   top: 40%;
+   transform: translate(-50%, -50%);
+   z-index: 999;
+   display: none;
+   
+   font-size: 50px;
+   font-family: Cooper-black;
+   padding: 50px;
+   background-color: rgb(8, 8, 8);
+   box-shadow: rgba(199, 199, 199, 0.2) 0px 19px 38px, 
+               rgba(199, 199, 199, 0.22) 0px 15px 12px;
+   border: 1px inset rgb(68, 68, 68);
+
+   &_transition,
+   &_transition-appear {
+      &-enter {
+         display: block;
+         opacity: 0;
+      }
+      
+      &-enter-active {
+         display: block;
+         animation: appear 2s ease 2 alternate;
+         @keyframes appear {
+            from {
+               opacity: 0;
+            }
+            to {
+               opacity: 1;
+            }
+         }
+      }
+      
+      &-enter-done {
+         display: none;
+      }
+   }
+}
+
+@media (max-width: 1700px) {
+   .header {  
+      grid-template-columns: (minmax(0, 10fr) minmax(0, 10fr) minmax(0, 8fr));
+
+      &_left {
+         &_title {
+            font-size: 30px;
+         }
+      }
+   }
+}
+
+@media (max-width: 1400px) {
+   .header {  
+      grid-template-columns: (minmax(0, 10fr) minmax(0, 10fr) minmax(0, 7fr));
+   }
+}
+
+@media (max-width: 1100px) {
+   .header {  
+      grid-template-columns: (minmax(0, 7fr) minmax(0, 9fr) minmax(0, 7fr));
+      gap: 0;
+
+      &_left {
+         width: auto;
+         &_title {
+            display: none;;
+         }
+
+         &_logo {  
+            height: 45px;
+            width: 45px;
+         }
+      }
+   }
+} 
+
+@media (max-width: 768px) {
+   .header {  
+      grid-template-columns: (minmax(0, 5fr) minmax(0, 10fr) minmax(0, 5fr));
+   }
+}
+
+@media (max-width: 481px) {
+   .header {  
+      grid-template-columns: (minmax(0, 4fr) minmax(0, 10fr) minmax(0, 4fr));
+      
+      &_left {
+         padding: 0; 
+         padding-left: 10px;
+      }
+      
+      &_right {
+         justify-content: center;
+
+         &_text { 
+            display: none;
+         }
+      }
+   }
+}
+
+@media (max-width: 440px) {
+   .header {  
+      grid-template-columns: (minmax(0, 3fr) minmax(0, 10fr) minmax(0, 3fr));
+
+      &_center {
+         &_submit {
+            margin-right: 10px;
+            padding: 0;
+         }
+      }
+
+      &_right {
+         &_text { 
+            display: none;
+         }
+      }
+   }
+}

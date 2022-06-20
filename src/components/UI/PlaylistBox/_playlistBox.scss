@@ -1,0 +1,32 @@
+@import '../../styles/main'; 
+
+.playlist_box {
+    display: flex;
+    width: 420px;
+    max-height: 800px;
+    margin-right: 1%;
+
+    border: 1px inset white;
+    border-radius: 10px;
+    padding: 5px;
+    padding-left: 0;
+
+    &_scrollOffset {
+        overflow-y: scroll;
+        width: 100%;
+    }
+}
+
+@media (max-width: 926px) {
+    .playlist_box {
+        width: auto;
+        max-height: 600px;
+        margin: 0 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .playlist_box {
+        margin: 0;
+    }
+}
