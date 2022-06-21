@@ -19,6 +19,7 @@ const Privacy = () => {
             <li> List of videos watched by user inside the App and playlists saved inside the App.</li></p>
             <p> The App, while using by authenticated user, is requesting and/or updating the following private data:<br />
             <li> List of user subscriptions and liked videos. This data is used to provide the user with ability to list or add/delete subscriptions and list liked videos.
+            </li> <li> Comments posting. The user has an ability to add new comments for videos.
             </li> </p>
             <p> The data does not leave user's browser. The data will not be transferred to other parties. The data will not be used for serving advertisements.
             </p>
