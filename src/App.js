@@ -9,6 +9,7 @@ import Watch  from './components/Routes/Watch/Watch';
 import Playlists  from './components/Routes/Playlists/Playlists';
 import Playlist  from './components/Routes/Playlist/Playlist';
 import Channel from './components/Routes/Channel/Channel';
+import Privacy from './components/UI/Privacy/Privacy';
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
           <Route index element={<Playlists/>} />
           <Route path=':playlistId' element={<Playlist/>} /> 
         </Route> 
+        <Route path='privacy' element={<Privacy/>} /> 
       </Route>
     </Routes>
   )

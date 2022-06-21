@@ -88,6 +88,15 @@ $fadeTime: 500ms;
          }
       }
    }
+
+   & #privacy {
+      color: rgb(59, 59, 59);
+      position: absolute;
+      bottom: 40px;
+      align-self: center;
+      margin: 0;
+      margin-right: 30px;
+   }
 }
 
 @media (max-width: 1100px) {

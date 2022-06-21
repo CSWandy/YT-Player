@@ -89,6 +89,9 @@ const Sidebar = () => {
             <MdHistory className='sidebar_item_logo' size={23} />
             <span className='sidebar_item_text'>History</span>
         </Link>
+        <Link id='privacy' to='/privacy'>
+            <span className='sidebar_item_text'>Privacy policy</span>
+        </Link>
     </nav>
     )
 }
