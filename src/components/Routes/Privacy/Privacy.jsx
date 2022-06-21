@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
+import { LayoutContext } from '../../../contexts/LayoutContext';
 
 import './_privacy.scss';
 
 const Privacy = () => {
+  const { layout: { menuActive }, setLayout } = useContext(LayoutContext); 
 
+  useEffect(() => {
+      setLayout(prev => ({...prev, menuActive: `Privacy`}));
+      document.title = 'Privacy info';
+  }, []);
+  
   return (
     <div className='privacy'>
         <h3 className='privacy_title'>YouTube API User Data Policy</h3>

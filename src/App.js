@@ -9,7 +9,7 @@ import Watch  from './components/Routes/Watch/Watch';
 import Playlists  from './components/Routes/Playlists/Playlists';
 import Playlist  from './components/Routes/Playlist/Playlist';
 import Channel from './components/Routes/Channel/Channel';
-import Privacy from './components/UI/Privacy/Privacy';
+import Privacy from './components/Routes/Privacy/Privacy';
 
 function App() {
 
