@@ -8,8 +8,8 @@ import Spinner from '../../UI/Spinner/Spinner';
 import { LayoutContext } from '../../../contexts/LayoutContext';
 
 import apiRequest from '../../../utils/apiRequest';
+import useFetch from '../../../utils/useFetch';
 import throttle from '../../../utils/throttle';
-import { googleLogout } from '@react-oauth/google';
 
 const Search = () => {
 
@@ -23,75 +23,60 @@ const Search = () => {
     const transitionNodeRef2 = useRef();
     const { layout: { menuActive }, setLayout } = useContext(LayoutContext);
 
-    useEffect( () =>  { 
-        const doFetch = async query => {
-            try {
-                setIsLoading(true);
-                const { data } = 
-                    await apiRequest.get('/search', {
-                        params: {
-                            part: 'snippet',
-                            type:'video,channel,playlist',
-                            maxResults: 16,
-                            q: query, 
-                            pageToken: nextPage,
-                        }
-                    });
-                
-                setSearchRes([...searchRes, ...data.items]);
-                if (data.nextPageToken) {
-                    setNextPage(data.nextPageToken);
-                } else {
-                    setNextPage('');
-                    setIsLastPage(true);
-                }
-                setIsLoading(false);
-                setFireFetch(false);
-            } catch (error) {
-                localStorage.setItem('token','');
-                setLayout(prev => ({...prev, loggedIn:false }));
-                googleLogout();
+    const doFetchPage = async query => {
+        if (fireFetch && !isLastPage) {
+            const { data } = 
+                await apiRequest.get('/search', {
+                    params: {
+                        part: 'snippet',
+                        type:'video,channel,playlist',
+                        maxResults: 16,
+                        q: query, 
+                        pageToken: nextPage,
+                    }
+                });
+            
+            setSearchRes([...searchRes, ...data.items]);
+            if (data.nextPageToken) {
+                setNextPage(data.nextPageToken);
+            } else {
+                setNextPage('');
+                setIsLastPage(true);
             }
-        };
+            setFireFetch(false);
+        } 
+    };
 
-        if (fireFetch && !isLastPage) doFetch(query);
-    }, [fireFetch]);
+    useFetch(doFetchPage, query, setIsLoading, [fireFetch]);
 
     useEffect( () =>  { 
         setLayout(prev => ({...prev, menuActive:`Search - ${query}`}));   
         document.title = `Search - ${query}`;
-
-        const doFetch = async query => {
-            try {
-                setIsLoading(true);
-                const { data } = 
-                    await apiRequest.get('/search', {
-                        params: {
-                            part: 'snippet',
-                            type:'video,channel,playlist',
-                            maxResults: 16,
-                            q: query, 
-                        }
-                    });
-                
-                setSearchRes(data.items);
-                if (data.nextPageToken) {
-                    setNextPage(data.nextPageToken);
-                } else {
-                    setNextPage('');
-                    setIsLastPage(true);
+    }, [query]);
+        
+    const doFetchFirst = async query => {
+        const { data } = 
+            await apiRequest.get('/search', {
+                params: {
+                    part: 'snippet',
+                    type:'video,channel,playlist',
+                    maxResults: 16,
+                    q: query, 
                 }
-                setIsLoading(false);
-                setFireFetch(false);
-            } catch (error) {
-                localStorage.setItem('token','');
-                setLayout(prev => ({...prev, loggedIn:false }));
-                googleLogout();
-            }
-        };
+            });
+        
+        if (data.nextPageToken) {
+            setNextPage(data.nextPageToken);
+        } else {
+            setNextPage('');
+            setIsLastPage(true);
+        }
 
-        doFetch(query);
-    }, [query, menuActive]);
+        setSearchRes(data.items);
+        setFireFetch(false);
+    };
+
+    useFetch(doFetchFirst, query, setIsLoading, [query, menuActive]);
 
     useEffect( () =>  { 
         document.addEventListener('scroll',  scrollHandler);
@@ -109,31 +94,35 @@ const Search = () => {
     return (
         <div className='screen_horizontal'>
             <h2>Results for: {query}</h2>
-            <CSSTransition  in={isLoading} 
-                            timeout={2100} 
-                            classNames="transition_spinner" 
-                            unmountOnExit 
-                            appear={true} 
-                            nodeRef={transitionNodeRef}>  
+            <CSSTransition  
+                        in={isLoading} 
+                        timeout={2100} 
+                        classNames="transition_spinner" 
+                        unmountOnExit 
+                        appear={true} 
+                        nodeRef={transitionNodeRef}>  
                 <div ref={transitionNodeRef} className='transition_lag transition_container'>
-                    <Spinner qty={10}
+                    <Spinner 
+                            qty={10}
                             parent={"Thumbnail"}
                             type='horizontal'/>
                 </div>  
             </CSSTransition>
-            <CSSTransition  in={!isLoading} 
-                            timeout={2100} 
-                            classNames="transition" 
-                            unmountOnExit 
-                            nodeRef={transitionNodeRef2}> 
+            <CSSTransition  
+                        in={!isLoading} 
+                        timeout={2100} 
+                        classNames="transition" 
+                        unmountOnExit 
+                        nodeRef={transitionNodeRef2}> 
                 <div ref={transitionNodeRef2} className='transition_lag transition_container'>
                     {searchRes.map(searchItem => { return (
                         (searchItem.id.kind === 'youtube#playlist')?
-                        <ThumbnailPlaylist  object={searchItem}
-                                            type='playlist'
-                                            key={searchItem.id.playlistId}
-                                            lines={8}
-                                            search/>
+                        <ThumbnailPlaylist  
+                                        object={searchItem}
+                                        type='playlist'
+                                        key={searchItem.id.playlistId}
+                                        lines={8}
+                                        search/>
                         :<Thumbnail video={searchItem}
                                     key={searchItem.id.videoId || searchItem.id.channelId}
                                     type="horizontal" 

@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useState, useLayoutEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import parse from 'html-react-parser';
 import moment from 'moment';
 import numeral from 'numeral';
 
 import apiRequest from '../../../utils/apiRequest';
+import useFetch from '../../../utils/useFetch';
 import calculateLines from '../../../utils/textHeightCalc';
 
 import './_thumbnail.scss';
@@ -63,43 +64,44 @@ const Thumbnail = (props) => {
     const [views, setViews] = useState(null);
     const [duration, setDuration] = useState();
     const [channelIcon, setChannelIcon] = useState();
+    const [isLoading, setIsLoading] = useState(true);
     const [descDivider, setDescDivider] = useState(description.length);
     const textNode = useRef();
     const navigate = useNavigate();
 
-
-    useEffect(() => {
-        const doFetch = async videoId => {
-                const { data: { items } } = 
-                    await apiRequest.get('/videos', {
-                        params: {
-                            part: 'contentDetails, statistics',
-                            id: videoId,
-                        }
-                    });
-                const seconds = !!items[0] && moment.duration(items[0]?.contentDetails?.duration).asSeconds();
-                const durationFormatted = moment.utc(seconds * 1000).format('mm:ss');
-                setDuration(durationFormatted);
-                setViews(items[0]?.statistics?.viewCount); 
-        };
-
-        if (showStats && videoId) doFetch(videoId);
-    }, [videoId]);
-
-    useEffect(() => {
-        const doFetch = async channelId => {
+    const doFetchStats = async videoId => {
+        if (showStats && videoId) {
             const { data: { items } } = 
-            await apiRequest.get('/channels', {
-                params: {
-                    part: 'snippet',
-                    id: channelId,
-                }
-            });
+                await apiRequest.get('/videos', {
+                    params: {
+                        part: 'contentDetails, statistics',
+                        id: videoId,
+                    }
+                });
+            const seconds = !!items[0] && moment.duration(items[0]?.contentDetails?.duration).asSeconds();
+            const durationFormatted = moment.utc(seconds * 1000).format('mm:ss');
+            setDuration(durationFormatted);
+            setViews(items[0]?.statistics?.viewCount); 
+        }
+    };
+
+    useFetch(doFetchStats, videoId, () => {}, [videoId]);
+
+    const doFetchChannelLogo = async channelId => {
+        if (showChannel) {
+            const { data: { items } } = 
+                await apiRequest.get('/channels', {
+                    params: {
+                        part: 'snippet',
+                        id: channelId,
+                    }
+                });
+            
             setChannelIcon(items[0].snippet.thumbnails.default);
         }
+    };
 
-        if (showChannel) doFetch(channelId);
-    }, [videoId]);
+    useFetch(doFetchChannelLogo, channelId, setIsLoading, [videoId]);
 
     const goToWatch = () => {
         (modifier === "_channel") ?
@@ -126,7 +128,9 @@ const Thumbnail = (props) => {
                 {(type === 'horizontal') ?
                 <img src={medium.url} alt="thumbnail" className={'thumbnail_'+type+'_head_image'+modifier}/>
                 :<img src={high.url}  alt="thumbnail" className={'thumbnail_'+type+'_head_image'}/>}
-                <span className={'thumbnail_'+type+'_head_duration'}>{!!duration && duration}</span>
+                <span className={'thumbnail_'+type+'_head_duration'}>
+                    {!!duration && !modifier && duration}
+                </span>
             </div>
 
             <div className={'thumbnail_'+type+'_description'}>
@@ -137,7 +141,7 @@ const Thumbnail = (props) => {
                     </div>
                 )}
                 
-                {showChannel && !modifier && 
+                {showChannel && !modifier && !isLoading &&
                 (<div className={'thumbnail_'+type+'_channel'} onClick={goToChannel}>
                     <img src={channelIcon?.url} alt="channel thumb" className={'thumbnail_'+type+'_channel_image'}/>
                     <h4 className={'thumbnail_'+type+'_channel_title'}>{channelTitle}</h4>

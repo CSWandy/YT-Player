@@ -55,10 +55,13 @@ const PlaylistBox = ( { plId, vidId }) => {
             {curPl?.map(video => {
                 if (video.snippet) {
                     return (
-                        <ThumbnailBox  video={video}
-                        key={(plId !== '') ? video.snippet.resourceId.videoId : video.id.videoId}
-                        idSrc={(plId !== '') ? 'snippet' : ''} 
-                        plId={plId}/>)}})}
+                        <ThumbnailBox  
+                                    video={video}
+                                    key={(plId !== '') ? video.snippet.resourceId.videoId : video.id.videoId}
+                                    idSrc={(plId !== '') ? 'snippet' : ''} 
+                                    plId={plId}/>)
+                }
+            })}
         </div>
     </div>
   )

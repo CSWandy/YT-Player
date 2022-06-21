@@ -22,10 +22,16 @@ const ThumbnailPlaylist = ({ object}) => {
 
   return (
     <section className={'horizontal_thumbnail_mini'} >
-      <img className={'horizontal_thumbnail_mini_image_playlist horizontal_thumbnail_image_link'} src={thumbnailDefault.url} alt={'playlist'+title} onClick={thumbnailLinkHandler}/>
-      <div className='horizontal_thumbnail_mini_description'>
-         <h3 className='horizontal_thumbnail_mini_description_title'>{parse(title)}</h3>
-      </div>
+    <img 
+        className={'horizontal_thumbnail_mini_image_playlist horizontal_thumbnail_image_link'} 
+        src={thumbnailDefault.url} 
+        alt={'playlist'+title} 
+        onClick={thumbnailLinkHandler}/>
+    <div className='horizontal_thumbnail_mini_description'>
+        <h3 className='horizontal_thumbnail_mini_description_title'>
+            {parse(title)}
+        </h3>
+    </div>
     </section>
     )
 }

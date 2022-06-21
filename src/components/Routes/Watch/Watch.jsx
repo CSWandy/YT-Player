@@ -8,8 +8,8 @@ import PlaylistBox from '../../UI/PlaylistBox/PlaylistBox';
 import Comments from '../../UI/Comments/Comments';
 import { LayoutContext } from '../../../contexts/LayoutContext';
 
-import { googleLogout } from '@react-oauth/google';
 import apiRequest from '../../../utils/apiRequest';
+import useFetch from '../../../utils/useFetch';
 
 import './_watch.scss';
 
@@ -45,44 +45,34 @@ const Watch = () => {
         playerConfig = merge(playerConfig, {youtube: { playerVars: { listType:"playlist", list:locationHash }}});
     }
 
-    useEffect(() => {
-        setIsLoading(true);
-
-        const doFetch = async vidId => {
-            try {
-                const { data : { items } } = 
-                    await apiRequest.get('/videos', {
-                        params: {
-                            part: 'snippet,contentDetails,statistics',
-                            id: vidId,
-                        }
-                    });
-                
-                const history = localStorage.getItem('history');
-                if (history.split(',')[0] !== vidId){
-                    localStorage.setItem('history', vidId + ',' + history);
+    const doFetch = async vidId => {
+        const { data : { items } } = 
+            await apiRequest.get('/videos', {
+                params: {
+                    part: 'snippet,contentDetails,statistics',
+                    id: vidId,
                 }
+            });
+        
+        const history = localStorage.getItem('history');
+        if (history.split(',')[0] !== vidId){
+            localStorage.setItem('history', vidId + ',' + history);
+        }
 
-                window.scrollTo(0, 0);
-                setVideoObject(items[0]);
-                setLayout(prev => ({...prev, menuActive: `Play - ${items[0]?.snippet.title ? items[0].snippet.title : ''}`}));
-                document.title = `Play - ${items[0]?.snippet.title ? items[0].snippet.title : ''}`;
-                setIsLoading(false);
-            } catch (error) {
-                localStorage.setItem('token','');
-                setLayout(prev => ({...prev, loggedIn:false }));
-                googleLogout();
-            }      
-        };
+        window.scrollTo(0, 0);
+        setVideoObject(items[0]);
+        setLayout(prev => ({...prev, menuActive: `Play - ${items[0]?.snippet.title ? items[0].snippet.title : ''}`}));
+        document.title = `Play - ${items[0]?.snippet.title ? items[0].snippet.title : ''}`;
+    };
 
-        doFetch(vidId);
-    }, [vidId]);
+    useFetch(doFetch, vidId, setIsLoading, [vidId]);
 
     return (
         !isLoading && 
         (<> 
             <div className="player">
-                <ReactPlayer url={`https://www.youtube.com/embed/${vidId}`} 
+                <ReactPlayer 
+                            url={`https://www.youtube.com/embed/${vidId}`} 
                             playing={true}
                             controls={true}
                             width='100%'
@@ -91,8 +81,9 @@ const Watch = () => {
             </div>
                 <PlayerDesc video={videoObject}/>
             <div className='player_bottom'>
-                <Comments   videoId={vidId}
-                            totalComments={videoObject.statistics.commentCount}/>
+                <Comments   
+                        videoId={vidId}
+                        totalComments={videoObject.statistics.commentCount}/>
                 <PlaylistBox plId={locationHash} vidId={vidId}/>
             </div>
         </>)

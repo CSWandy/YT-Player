@@ -6,7 +6,7 @@ import Thumbnail from '../../UI/Thumbnail/Thumbnail';
 import Spinner from '../../UI/Spinner/Spinner';
 
 import apiRequest from '../../../utils/apiRequest';
-import { googleLogout } from '@react-oauth/google'; 
+import useFetch from '../../../utils/useFetch';
 
 const Liked = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -20,55 +20,49 @@ const Liked = () => {
         document.title = 'Liked';
     }, []);
 
-    useEffect(() => {
-        setIsLoading(true);
+    const doFetch = async () => {
+        const { data: { items } } = 
+                await apiRequest.get('/videos', 
+                    { params: {
+                        part: 'contentDetails,statistics,snippet',
+                        maxResults: 15, 
+                        myRating: 'like'}
+                    });
 
-        const doFetch = async () => {
-            try {
-                const { data: { items } } = 
-                    await apiRequest.get('/videos', 
-                        { params: {
-                            part: 'contentDetails,statistics,snippet',
-                            maxResults: 15, 
-                            myRating: 'like'}
-                        });
-                setVids(items);
-                setIsLoading(false);
-            } catch (error) {
-                localStorage.setItem('token','');
-                setLayout(prev => ({...prev, loggedIn:false }));
-                googleLogout();
-            }         
-        };
+        setVids(items); 
+    };
 
-        doFetch();
-    }, [menuActive]);
+    useFetch(doFetch, null, setIsLoading, [menuActive]);
 
     return ( 
     <>
         <h2>Liked videos:</h2>
-        <CSSTransition  in={isLoading} 
-                        timeout={2000} 
-                        classNames="transition_spinner" 
-                        unmountOnExit 
-                        appear={true} 
-                        nodeRef={transitionNodeRef}>  
+        <CSSTransition  
+                    in={isLoading} 
+                    timeout={2000} 
+                    classNames="transition_spinner" 
+                    unmountOnExit 
+                    appear={true} 
+                    nodeRef={transitionNodeRef}>  
             <div ref={transitionNodeRef} className='transition_container transition_pos_abs'>
-                <Spinner qty={10}
-                         parent={"Thumbnail"}
-                         type='grid'/>
+                <Spinner 
+                        qty={10}
+                        parent={"Thumbnail"}
+                        type='grid'/>
             </div>  
         </CSSTransition>
-        <CSSTransition  in={!isLoading} 
-                        timeout={2100} 
-                        classNames="transition" 
-                        unmountOnExit 
-                        nodeRef={transitionNodeRef2}> 
+        <CSSTransition  
+                    in={!isLoading} 
+                    timeout={2100} 
+                    classNames="transition" 
+                    unmountOnExit 
+                    nodeRef={transitionNodeRef2}> 
             <div ref={transitionNodeRef2} className='screen_grid'>
                 {(vids?.map(video => 
-                    (<Thumbnail video={video}
-                                key={video.id}
-                                type="grid" />))) }
+                    (<Thumbnail 
+                            video={video}
+                            key={video.id}
+                            type="grid" />))) }
 
             </div>
         </CSSTransition>
@@ -77,3 +71,4 @@ const Liked = () => {
 }
 
 export default Liked
+

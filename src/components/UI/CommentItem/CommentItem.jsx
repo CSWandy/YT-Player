@@ -21,9 +21,10 @@ const CommentItem = ( { comment } ) => {
   return (
     <div className='player_comments_list_item'>
          <div className='player_comments_list_item_side'>
-            <img src={authorProfileImageUrl}
-                 alt=''
-                 className='player_comments_list_item_side_image'/>
+            <img 
+                src={authorProfileImageUrl}
+                alt='avatar'
+                className='player_comments_list_item_side_image'/>
             {!!likeCount && 
             <span className='player_comments_list_item_side_likes'>
                {likeCount} {(likeCount === 1)? 'Like' : 'Likes'}

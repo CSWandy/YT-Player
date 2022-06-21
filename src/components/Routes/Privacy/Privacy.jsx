@@ -4,7 +4,7 @@ import { LayoutContext } from '../../../contexts/LayoutContext';
 import './_privacy.scss';
 
 const Privacy = () => {
-  const { layout: { menuActive }, setLayout } = useContext(LayoutContext); 
+  const { setLayout } = useContext(LayoutContext); 
 
   useEffect(() => {
       setLayout(prev => ({...prev, menuActive: `Privacy`}));

@@ -4,7 +4,7 @@ import { CSSTransition } from 'react-transition-group';
 
 import { AiOutlineSearch } from 'react-icons/ai';
 import { MdExitToApp } from 'react-icons/md';
-import logo from '../../../icons/png/logo3.png';
+import logo from '../../../assets/icons/png/logo.png';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
 import { useGoogleLogin, googleLogout } from '@react-oauth/google';
@@ -57,21 +57,22 @@ const Header = () => {
    return (
         <>
             <header className='header'>
-                <div className='header_left'
-                     size={26}>
-                    <img    className="header_left_logo" 
-                            src={logo} 
-                            alt="main logo" 
-                            onClick={() => sidebarHandler()}/>
+                <div className='header_left'>
+                    <img    
+                        className="header_left_logo" 
+                        src={logo} 
+                        alt="main logo" 
+                        onClick={() => sidebarHandler()}/>
                     <span className='header_left_title'>{menuActive}</span>
                 </div>
 
                 <form  className='header_center' onSubmit={handleSubmit}>
-                    <input  className='header_center_input'
-                            type='text'
-                            placeholder='Search'
-                            value={input}
-                            onChange={e => setInput(e.target.value)} />
+                    <input  
+                        className='header_center_input'
+                        type='text'
+                        placeholder='Search'
+                        value={input}
+                        onChange={e => setInput(e.target.value)} />
                     <button className='header_center_submit' type='submit'>
                         <AiOutlineSearch size={22} />
                     </button>
@@ -80,11 +81,15 @@ const Header = () => {
                 {!loggedIn?         
                 (<span className='header_right'>
                     <span className='header_right_text' onClick={logInHandler}>Log In</span>
-                    <span className='header_right_logo' onClick={logInHandler}> <MdExitToApp size={30} viewBox={0} width="30px" height="30px"  /> </span>
+                    <span className='header_right_logo' onClick={logInHandler}> 
+                        <MdExitToApp size={30} viewBox={0} width="30px" height="30px"/> 
+                    </span>
                 </span>)
                 :(<span  className='header_right'>
                     <span className='header_right_text' onClick={logOutHandler}>Log Out</span>
-                    <span className='header_right_logo' onClick={logOutHandler}> <MdExitToApp size={30} viewBox={0} width="30px" height="30px"  /> </span>
+                    <span className='header_right_logo' onClick={logOutHandler}> 
+                        <MdExitToApp size={30} viewBox={0} width="30px" height="30px"/> 
+                    </span>
                 </span>)}
 
                 {!loggedIn && ( 
@@ -93,12 +98,13 @@ const Header = () => {
                 </div>
                 )}
             </header>
-            <CSSTransition  in={fireModal.current} 
-                            timeout={2000} 
-                            appear 
-                            classNames="login_modal_transition" 
-                            nodeRef={transitionNodeRef}
-                            onEntered={() => {fireModal.current = false}}>   
+            <CSSTransition  
+                        in={fireModal.current} 
+                        timeout={2000} 
+                        appear 
+                        classNames="login_modal_transition" 
+                        nodeRef={transitionNodeRef}
+                        onEntered={() => {fireModal.current = false}}>   
                     <span ref={transitionNodeRef}  className="login_modal">
                         Please, sign in
                     </span>      

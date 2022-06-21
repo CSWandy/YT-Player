@@ -1,38 +1,28 @@
-import { useEffect, useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
 
-import { googleLogout } from '@react-oauth/google';
 import apiRequest from '../../../utils/apiRequest';
+import useFetch from '../../../utils/useFetch';
 
 import './_subButton.scss';
 
 const SubButton = ( { channelItem, channelId } ) => {
     const [isLoading, setIsLoading] = useState(true);
     const [subscriptions, setSubscriptions ] = useState(null);
-    const { layout: {loggedIn}, setLayout } = useContext(LayoutContext);
+    const { layout: {loggedIn} } = useContext(LayoutContext);
     
-    useEffect( () => { 
-        const doFetch = async () => {
-            try {
-                setIsLoading(true);
-                const subList = await apiRequest.get('/subscriptions', {
-                    params: {
-                        part: 'snippet',
-                        mine: true,
-                    }
-                });
-                setSubscriptions(subList.data.items);
-                setIsLoading(false);
-            } catch (error) {
-                localStorage.setItem('token','');
-                setLayout(prev => ({...prev, loggedIn:false }));
-                googleLogout();
-            }             
-        };
+    const doFetch = async () => {
+        const subList = await apiRequest.get('/subscriptions', {
+            params: {
+                part: 'snippet',
+                mine: true,
+            }
+        });
+        setSubscriptions(subList.data.items);
+    };
 
-            doFetch(channelId);
-        }, [channelId]);
+    useFetch(doFetch, null, setIsLoading, [channelId]);
 
     let subscribed = 
         subscriptions &&

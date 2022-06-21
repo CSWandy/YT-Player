@@ -7,7 +7,7 @@ import ChannelScreenHeader from '../../UI/ChannelScreenHeader/ChannelScreenHeade
 import Thumbnail from '../../UI/Thumbnail/Thumbnail';
 import Spinner from '../../UI/Spinner/Spinner';
 
-import { googleLogout } from '@react-oauth/google';
+import useFetch from '../../../utils/useFetch';
 import apiRequest from '../../../utils/apiRequest';
 
 const Channel = () => {
@@ -24,61 +24,54 @@ const Channel = () => {
         document.title = `Channel - ${channelItem?.snippet?.title ? channelItem.snippet.title : ''}`;
     }, [channelItem]);
 
-    useEffect( () => { 
-        const doFetch = async channelId => {
-            try {
-                setIsLoading(true);
-                const { data: { items } } = 
-                    await apiRequest.get('/channels', 
-                        { params: {
-                            part: 'snippet,contentDetails,statistics',
-                            id: channelId
-                            }
-                        });
+    
+    const doFetch = async channelId => {
+        const { data: { items } } = 
+            await apiRequest.get('/channels', 
+                { params: {
+                    part: 'snippet,contentDetails,statistics',
+                    id: channelId
+                    }
+                });
 
-                setChannelItem(items[0]);
-                const channelPlId = (items[0].contentDetails.relatedPlaylists.uploads);
+        setChannelItem(items[0]);
+        const channelPlId = (items[0].contentDetails.relatedPlaylists.uploads);
+        const { data } = await apiRequest.get('playlistItems', 
+            { params: {
+                    part: 'snippet, contentDetails',
+                    maxResults: 30,
+                    playlistId:channelPlId,
+                    }
+            });
 
-                const { data } = await apiRequest.get('playlistItems', 
-                    { params: {
-                            part: 'snippet, contentDetails',
-                            maxResults: 30,
-                            playlistId:channelPlId,
-                            }
-                    });
+        setVids(data.items); 
+    };
 
-                setVids(data.items); 
-                setIsLoading(false);
-            } catch (error) {
-                localStorage.setItem('token','');
-                setLayout(prev => ({...prev, loggedIn:false }));
-                googleLogout();
-            }     
-        };
-
-        doFetch(channelId);
-    }, [channelId]);
+    useFetch(doFetch, channelId, setIsLoading, [channelId]);
 
     return (
         <>
             <ChannelScreenHeader channelItem={channelItem} channelId={channelId}/>
-            <CSSTransition  in={isLoading} 
-                            timeout={2000} 
-                            classNames="transition_spinner" 
-                            unmountOnExit 
-                            appear={true} 
-                            nodeRef={transitionNodeRef}>  
+            <CSSTransition  
+                        in={isLoading} 
+                        timeout={2000} 
+                        classNames="transition_spinner" 
+                        unmountOnExit 
+                        appear={true} 
+                        nodeRef={transitionNodeRef}>  
                 <div ref={transitionNodeRef} className='transition_container transition_pos_abs'>
-                    <Spinner qty={10}
-                            parent={"Thumbnail"}
-                            type='grid'/>
+                    <Spinner 
+                        qty={10}
+                        parent={"Thumbnail"}
+                        type='grid'/>
                 </div>  
             </CSSTransition>
-            <CSSTransition  in={!isLoading} 
-                            timeout={2100} 
-                            classNames="transition" 
-                            unmountOnExit 
-                            nodeRef={transitionNodeRef2}> 
+            <CSSTransition  
+                        in={!isLoading} 
+                        timeout={2100} 
+                        classNames="transition" 
+                        unmountOnExit 
+                        nodeRef={transitionNodeRef2}> 
                 <div ref={transitionNodeRef2} className='screen_grid'> 
                     {vids.map(video => 
                         (<Thumbnail video={video}

@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { LayoutContext } from '../../../contexts/LayoutContext';
 
-import { googleLogout } from '@react-oauth/google';
 import apiRequest from '../../../utils/apiRequest';
+import useFetch from '../../../utils/useFetch';
 
 import './_commentsAdd.scss';
 
@@ -13,31 +13,19 @@ const CommentsAdd = ( { videoId } ) => {
     const [isLoading, setIsLoading] = useState(true);
     const { layout: { menuActive }, setLayout } = useContext(LayoutContext);
 
-    useEffect(() => {
-        setIsLoading(true);
+    const doFetch = async () => {      
+        const { data } = 
+            await apiRequest.get('/channels', {
+                params: {
+                    part: 'snippet',
+                    mine: true,
+                }
+            });
 
-        const doFetch = async () => {
+        setAvatar(data.items[0].snippet.thumbnails);
+    };
 
-            try {          
-                const { data } = 
-                    await apiRequest.get('/channels', {
-                        params: {
-                            part: 'snippet',
-                            mine: true,
-                        }
-                    });
-
-                setAvatar(data.items[0].snippet.thumbnails);
-                setIsLoading(false);
-            } catch (error) {
-                localStorage.setItem('token','');
-                setLayout(prev => ({...prev, loggedIn:false }));
-                googleLogout();
-            }      
-        };
-
-        doFetch();
-    }, [menuActive]);
+    useFetch(doFetch, null, setIsLoading, [menuActive]);
 
     const addCommentHandler = async e => {
         e.preventDefault();
@@ -70,11 +58,11 @@ const CommentsAdd = ( { videoId } ) => {
                 <img src={avatar?.default?.url} alt='avatar' className='player_comments_add_avatar' />
                 <form onSubmit={addCommentHandler} className='player_comments_add_form'>
                     <input
-                    type='text'
-                    className='player_comments_add_form_input'
-                    placeholder='Add comment...'
-                    value={text}
-                    onChange={e => setText(e.target.value)}
+                        type='text'
+                        className='player_comments_add_form_input'
+                        placeholder='Add comment...'
+                        value={text}
+                        onChange={e => setText(e.target.value)}
                     />
                     <button className='player_comments_add_form_submit'>Comment</button>
                 </form>

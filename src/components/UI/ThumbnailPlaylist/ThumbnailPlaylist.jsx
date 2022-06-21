@@ -13,14 +13,12 @@ const ThumbnailPlaylist = ({ object, type, activeLink = true, search = false, li
         id,
         snippet: {
             title,
-            publishedAt,
-            channelId,
             description,
-            thumbnails: { default:thumbnailDefault, medium },
+            thumbnails: { medium },
         }
     } = object;
     
-    let savedPl =  localStorage.getItem('savedPlaylists');
+    let savedPl = localStorage.getItem('savedPlaylists');
     const [descDivider, setDescDivider] = useState(description.length);
     const [isSaved, setIsSaved] = useState(savedPl.includes(id));
     const textNode = useRef();
@@ -44,8 +42,8 @@ const ThumbnailPlaylist = ({ object, type, activeLink = true, search = false, li
                     break;
                 default:
                     break;
-                }
             }
+        }
     };
 
     useLayoutEffect(() => {
@@ -68,14 +66,15 @@ const ThumbnailPlaylist = ({ object, type, activeLink = true, search = false, li
     return (
         <section className={'horizontal_thumbnail'} >
             <div className='horizontal_thumbnail_head'>
-        <img className={'horizontal_thumbnail_head_image_'+type+(activeLink? ' horizontal_thumbnail_head_image_link' : '')} 
-             src={medium.url} 
-             alt={type+title} 
-             onClick={thumbnailLinkHandler}/>
-             {type === 'playlist' && 
-            <button className='horizontal_thumbnail_head_button' onClick={saveHandler}> {isSaved? 'Unsave' : 'Save'} </button>}
-            {type === 'channel' && 
-            <SubButton channelItem={object} channelId={object.snippet.resourceId.channelId}/>}
+        <img 
+            className={'horizontal_thumbnail_head_image_'+type+(activeLink? ' horizontal_thumbnail_head_image_link' : '')} 
+            src={medium.url} 
+            alt={type+title} 
+            onClick={thumbnailLinkHandler}/>
+        {type === 'playlist' && 
+        <button className='horizontal_thumbnail_head_button' onClick={saveHandler}> {isSaved? 'Unsave' : 'Save'} </button>}
+        {type === 'channel' && 
+        <SubButton channelItem={object} channelId={object.snippet.resourceId.channelId}/>}
         </div>
         <div className='horizontal_thumbnail_description'>
             <h3 className='horizontal_thumbnail_description_title'>{parse(title)}</h3>

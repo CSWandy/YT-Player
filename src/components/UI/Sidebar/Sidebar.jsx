@@ -1,12 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import ThumbnailPlaylistMini from '../ThumbnailPlaylistMini/ThumbnailPlaylistMini';
 import { LayoutContext } from '../../../contexts/LayoutContext'; 
 
 import apiRequest from '../../../utils/apiRequest';
+import useFetch from '../../../utils/useFetch';
 
-import './_sidebar.scss'
+import './_sidebar.scss';
 
 import {
    MdSubscriptions,
@@ -27,24 +28,19 @@ const Sidebar = () => {
     const { layout:{ sideBarOpen, plDropDownOpen }, setLayout } = useContext(LayoutContext);
     const savedPl = localStorage.getItem('savedPlaylists');
 
-    useEffect(() => {
-        setIsLoading(true);
+    const doFetch = async PlIds => {
+        const { data: { items } } = 
+            await apiRequest.get('/playlists', 
+            { params: { 
+                part: 'contentDetails,snippet',
+                id: PlIds}
+            });
+            
+        setPlData(items);
+        setPlFiltered(items);
+    };
 
-        const doFetch = async PlIds => {
-            const { data: { items } } = 
-                await apiRequest.get('/playlists', 
-                { params: { 
-                    part: 'contentDetails,snippet',
-                    id: PlIds}
-                });
-                
-            setPlData(items);
-            setPlFiltered(items);
-            setIsLoading(false);
-        };
-        
-        doFetch(savedPl);
-    }, [savedPl]);
+    useFetch(doFetch, savedPl, setIsLoading, [savedPl]);
 
     const dropDownHandler = e => {
         e.preventDefault();
@@ -73,9 +69,15 @@ const Sidebar = () => {
         </Link>
         {plDropDownOpen && !isLoading &&
             <div className='sidebar_item_dropdown_list'>
-                <input className='sidebar_item_dropdown_list_filter' type="text" placeholder='Filter...' value={filter} size={filter.length} onChange={filterHandler}/>
-                {plFiltered.map(pl => (<ThumbnailPlaylistMini object={pl}
-                                                                key={pl.id}/>))}
+                <input 
+                    className='sidebar_item_dropdown_list_filter' 
+                    type="text" 
+                    placeholder='Filter...' 
+                    value={filter} 
+                    size={filter.length} 
+                    onChange={filterHandler}/>
+                {plFiltered.map(pl => 
+                    (<ThumbnailPlaylistMini object={pl} key={pl.id}/>))}
             </div> }
         <Link className='sidebar_item' to='/subscriptions'>
             <MdSubscriptions className='sidebar_item_logo' size={23} />

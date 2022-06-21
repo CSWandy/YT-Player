@@ -6,7 +6,7 @@ import Thumbnail from '../../UI/Thumbnail/Thumbnail';
 import Spinner from '../../UI/Spinner/Spinner';
 
 import apiRequest from '../../../utils/apiRequest';
-import { googleLogout } from '@react-oauth/google';
+import useFetch from '../../../utils/useFetch';
 
 const History = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -21,53 +21,47 @@ const History = () => {
         document.title = 'History';
     }, []);
 
-    useEffect(() => {
-        setIsLoading(true);
+    const doFetch = async history => {
+        const { data } = await apiRequest.get('/videos', {
+            params: {
+                part: 'contentDetails,statistics,snippet',
+                id: history.slice(0, 15).join(',')
+            }
+        });
 
-        const doFetch = async history => {
-            try {
-                const { data } = await apiRequest.get('/videos', {
-                    params: {
-                        part: 'contentDetails,statistics,snippet',
-                        id: history.slice(0, 15).join(',')
-                    }
-                });
-                setVids(data.items);
-                setIsLoading(false);
-            } catch (error) {
-                localStorage.setItem('token','');
-                setLayout(prev => ({...prev, loggedIn:false }));
-                googleLogout();
-            }       
+        setVids(data.items);
         };
 
-        doFetch(history);
-    }, [menuActive]);
+    useFetch(doFetch, history, setIsLoading, [menuActive]);
 
     return (
     <div className='screen_horizontal'> 
         <h2>History:</h2>
-        <CSSTransition  in={isLoading} 
-                        timeout={2100} 
-                        classNames="transition_spinner" 
-                        unmountOnExit 
-                        nodeRef={nodeRef}>   
+        <CSSTransition  
+                    in={isLoading} 
+                    timeout={2100} 
+                    classNames="transition_spinner" 
+                    unmountOnExit 
+                    nodeRef={nodeRef}>   
             <div ref={nodeRef} className='transition_container transition_lag'>
-                <Spinner qty={4}
-                         parent={"Thumbnail"}
-                         type='horizontal' />
+                <Spinner 
+                        qty={4}
+                        parent={"Thumbnail"}
+                        type='horizontal' />
             </div>      
         </CSSTransition >
-        <CSSTransition  in={!isLoading} 
-                        timeout={2100} 
-                        classNames="transition" 
-                        unmountOnExit 
-                        nodeRef={nodeRef2}> 
+        <CSSTransition  
+                    in={!isLoading} 
+                    timeout={2100} 
+                    classNames="transition" 
+                    unmountOnExit 
+                    nodeRef={nodeRef2}> 
             <div className='transition_container transition_lag' ref={nodeRef2}>
                 {vids.map((video, index) => 
-                    (<Thumbnail video={video}
-                                key={video.id+index}
-                                type="horizontal" />))}
+                    (<Thumbnail 
+                            video={video}
+                            key={video.id+index}
+                            type="horizontal" />))}
             </div> 
         </CSSTransition >
     </div>

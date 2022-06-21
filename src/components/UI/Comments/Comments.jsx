@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { LayoutContext } from '../../../contexts/LayoutContext';
 import CommentItem from '../CommentItem/CommentItem';
 import CommentsAdd from '../CommentsAdd/CommentsAdd';
 
-import { googleLogout } from '@react-oauth/google';
 import apiRequest from '../../../utils/apiRequest';
+import useFetch from '../../../utils/useFetch';
 import throttle from '../../../utils/throttle';
 
 import './_comments.scss';
@@ -17,38 +16,29 @@ const Comments = ( { videoId, totalComments } ) => {
     const [nextPage, setNextPage] = useState('');
     const [isLastPage, setIsLastPage] = useState(false);
     const [fireFetch, setFireFetch] = useState(true);
-    const { setLayout } = useContext(LayoutContext);
 
-    useEffect(() => {
-        const doFetch = async videoId => {
-            try {
-                setIsLoading(true);
-                const { data } = await apiRequest.get('/commentThreads', {
-                        params: {
-                            part: 'snippet',
-                            videoId: videoId,
-                            pageToken: nextPage,
-                        },
-                    }); 
+    const doFetch = async videoId => {
+        if (fireFetch && !isLastPage) { 
+            const { data } = await apiRequest.get('/commentThreads', {
+                    params: {
+                        part: 'snippet',
+                        videoId: videoId,
+                        pageToken: nextPage,
+                    },
+                }); 
 
-                setComments([...comments, ...data.items]);
-                if (data.nextPageToken) {
-                    setNextPage(data.nextPageToken);
-                } else {
-                    setNextPage('');
-                    setIsLastPage(true);
-                }
-                setIsLoading(false);
-                setFireFetch(false);
-            } catch (error) {
-                localStorage.setItem('token','');
-                setLayout(prev => ({...prev, loggedIn:false }));
-                googleLogout();
-            }     
-        };
-        
-        if (fireFetch && !isLastPage) doFetch(videoId);
-    }, [fireFetch]);
+            setComments([...comments, ...data.items]);
+            if (data.nextPageToken) {
+                setNextPage(data.nextPageToken);
+            } else {
+                setNextPage('');
+                setIsLastPage(true);
+            }
+            setFireFetch(false);
+        }
+    };
+
+    useFetch(doFetch, videoId, setIsLoading, [fireFetch]);
 
     useEffect( () =>  { 
         document.addEventListener('scroll',  scrollHandler);
@@ -70,9 +60,8 @@ return (
             {comments && <h5 className='player_comments_total'>{totalComments} Comments </h5>}
             <CommentsAdd videoId={videoId}/>
             <div className='player_comments_list'>
-                {comments?.map((comment) => (
-                    <CommentItem comment={comment.snippet} key={comment.id} />
-                ))}
+                {comments?.map((comment) => 
+                    (<CommentItem comment={comment.snippet} key={comment.id} />))}
             </div>
          </>}
       </section>

@@ -6,7 +6,7 @@ import ThumbnailPlaylist from '../../UI/ThumbnailPlaylist/ThumbnailPlaylist';
 import Spinner from '../../UI/Spinner/Spinner';
 
 import apiRequest from '../../../utils/apiRequest';
-import { googleLogout } from '@react-oauth/google'; 
+import useFetch from '../../../utils/useFetch';
 
 const Playlists = () => {
 
@@ -22,54 +22,47 @@ const Playlists = () => {
         document.title = 'Playlists';
     }, []);
 
-    useEffect(() => {
-        setIsLoading(true);
+    const doFetch = async savedPl => {
+            const { data: { items } } = 
+                await apiRequest.get('/playlists', 
+                    { params: { 
+                        part: 'contentDetails,snippet',
+                        id: savedPl}
+                    });
+            setPl(items);
+            setIsLoading(false);
+    };
 
-        const doFetch = async savedPl =>{
-            try {
-                const { data: { items } } = 
-                    await apiRequest.get('/playlists', 
-                        { params: { 
-                            part: 'contentDetails,snippet',
-                            id: savedPl}
-                        });
-                setPl(items);
-                setIsLoading(false);
-            } catch (error) {
-                localStorage.setItem('token','');
-                setLayout(prev => ({...prev, loggedIn:false }));
-                googleLogout();
-            }     
-         };
-
-        doFetch(savedPl);
-    }, [menuActive]);
-
+    useFetch(doFetch, savedPl, setIsLoading, [menuActive]);
 
     return (
         <div className='screen_horizontal'> 
             <h2>Saved playlists:</h2>
-            <CSSTransition  in={isLoading} 
-                            timeout={2100} 
-                            classNames="transition_spinner" 
-                            unmountOnExit 
-                            nodeRef={transitionNodeRef}>   
+            <CSSTransition  
+                        in={isLoading} 
+                        timeout={2100} 
+                        classNames="transition_spinner" 
+                        unmountOnExit 
+                        nodeRef={transitionNodeRef}>   
                 <div ref={transitionNodeRef}  className="transition_lag">
-                    <Spinner qty={4}
+                    <Spinner 
+                            qty={4}
                             parent={"ThumbnailPlaylist"}
                             type='playlist' />
                 </div>      
             </CSSTransition >
-            <CSSTransition  in={!isLoading} 
-                            timeout={2100} 
-                            classNames="transition" 
-                            unmountOnExit 
-                            nodeRef={transitionNodeRef2}> 
+            <CSSTransition  
+                        in={!isLoading} 
+                        timeout={2100} 
+                        classNames="transition" 
+                        unmountOnExit 
+                        nodeRef={transitionNodeRef2}> 
                 <div ref={transitionNodeRef2} className="transition_lag">
-                    {Pl.map(pl => (<ThumbnailPlaylist object={pl}
-                                                    type='playlist'
-                                                    key={pl.id}
-                                                    lines={8}/>))}
+                    {Pl.map(pl => 
+                        (<ThumbnailPlaylist object={pl}
+                                            type='playlist'
+                                            key={pl.id}
+                                            lines={8}/>))}
                 </div> 
             </CSSTransition >
         </div>

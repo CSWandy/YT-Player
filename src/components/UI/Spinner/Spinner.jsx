@@ -1,7 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 import Switch from '../Switch/Switch';
-import spinnerIco from '../../../icons/png/seer_300.png';
+import spinnerIco from '../../../assets/icons/png/spinner.png';
 
 import './_spinner.scss';
 
@@ -23,7 +23,7 @@ const Spinner = (props) => {
 
             <div case={"ThumbnailPlaylist"} >
                 { [...Array(qty)].map( (item, index) => 
-                    <div  className={`spinner`} key={`spinner_${index}`}>
+                    <div className={`spinner`} key={`spinner_${index}`}>
                         <section className={'horizontal_thumbnail'} >
                             <div className={'spinner_rotation_'+index+' horizontal_thumbnail_head'}>
                                 <img className='horizontal_thumbnail_head_image_spinner spinner_rotation' src={spinnerIco} alt={props.type+'spinner'} />
@@ -57,7 +57,6 @@ const Spinner = (props) => {
                                 Lorem ipsum  
                             </div>
                             
-                            
                             {showChannel && 
                             (<div className={'thumbnail_'+type+'_channel'} >
                                 <img src={spinnerIco} alt={props.type+'spinner channel'} className={'thumbnail_'+type+'_channel_image_spinner spinner_rotation'}/>
@@ -78,8 +77,6 @@ const Spinner = (props) => {
             </div>
 
         </Switch>
-
-
     )
 }
 
