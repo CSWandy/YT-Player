@@ -6,12 +6,12 @@ main {
     &_open {
         width: calc(100% - 245px);
         transform: translateX(245px);
-        transition: all 1s 0.5s;
+        transition: all 1s 250ms;
     }
 
     &_closed {
         width: 100%;
-        transition: all 1s 0.5s;
+        transition: all 1s 250ms;
     }
 }
 

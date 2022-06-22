@@ -33,7 +33,7 @@ const Playlists = () => {
             setIsLoading(false);
     };
 
-    useFetch(doFetch, savedPl, setIsLoading, [menuActive]);
+    useFetch(doFetch, savedPl, setIsLoading, [menuActive], true);
 
     return (
         <div className='screen_horizontal'> 
@@ -44,7 +44,7 @@ const Playlists = () => {
                         classNames="transition_spinner" 
                         unmountOnExit 
                         nodeRef={transitionNodeRef}>   
-                <div ref={transitionNodeRef}  className="transition_lag">
+                <div ref={transitionNodeRef}  className="transition_pos_abs">
                     <Spinner 
                             qty={4}
                             parent={"ThumbnailPlaylist"}
@@ -57,7 +57,7 @@ const Playlists = () => {
                         classNames="transition" 
                         unmountOnExit 
                         nodeRef={transitionNodeRef2}> 
-                <div ref={transitionNodeRef2} className="transition_lag">
+                <div ref={transitionNodeRef2} >
                     {Pl.map(pl => 
                         (<ThumbnailPlaylist object={pl}
                                             type='playlist'

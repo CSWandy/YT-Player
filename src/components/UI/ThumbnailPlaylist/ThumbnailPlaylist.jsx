@@ -1,10 +1,11 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import parse from 'html-react-parser';
 
+import { LayoutContext } from '../../../contexts/LayoutContext';
 import SubButton from '../SubButton/SubButton';
 
 import { useNavigate } from "react-router-dom";
-import calculateLines from '../../../utils/textHeightCalc';
+import useHeightCalc from '../../../utils/useHeightCalc';
 
 import './_thumbnailPlaylist.scss';
 
@@ -21,8 +22,11 @@ const ThumbnailPlaylist = ({ object, type, activeLink = true, search = false, li
     let savedPl = localStorage.getItem('savedPlaylists');
     const [descDivider, setDescDivider] = useState(description.length);
     const [isSaved, setIsSaved] = useState(savedPl.includes(id));
+    const {layout:{sideBarOpen}} = useContext(LayoutContext);
     const textNode = useRef();
     const navigate = useNavigate();
+
+    useHeightCalc(textNode, setDescDivider, description, lines, [sideBarOpen, description]);
 
     const thumbnailLinkHandler = () => {
         if (activeLink) {
@@ -45,11 +49,6 @@ const ThumbnailPlaylist = ({ object, type, activeLink = true, search = false, li
             }
         }
     };
-
-    useLayoutEffect(() => {
-        const textWidth = textNode.current?.offsetWidth;
-        setDescDivider(calculateLines(description, lines, textWidth, 20)); 
-    },[object]);
 
     const saveHandler = () => {
         savedPl =  localStorage.getItem('savedPlaylists');

@@ -47,7 +47,7 @@ const Search = () => {
         } 
     };
 
-    useFetch(doFetchPage, query, setIsLoading, [fireFetch], false);
+    useFetch(doFetchPage, query, setIsLoading, [fireFetch]);
 
     useEffect( () =>  { 
         setLayout(prev => ({...prev, menuActive:`Search - ${query}`}));   
@@ -101,7 +101,7 @@ const Search = () => {
                         unmountOnExit 
                         appear={true} 
                         nodeRef={transitionNodeRef}>  
-                <div ref={transitionNodeRef} className='transition_lag transition_container'>
+                <div ref={transitionNodeRef} className='transition_pos_abs'>
                     <Spinner 
                             qty={10}
                             parent={"Thumbnail"}
@@ -114,7 +114,7 @@ const Search = () => {
                         classNames="transition" 
                         unmountOnExit 
                         nodeRef={transitionNodeRef2}> 
-                <div ref={transitionNodeRef2} className='transition_lag transition_container'>
+                <div ref={transitionNodeRef2} >
                     {searchRes.map(searchItem => { return (
                         (searchItem.id.kind === 'youtube#playlist')?
                         <ThumbnailPlaylist  

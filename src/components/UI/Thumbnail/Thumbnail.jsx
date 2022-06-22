@@ -1,12 +1,14 @@
-import React, { useState, useLayoutEffect, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import parse from 'html-react-parser';
 import moment from 'moment';
 import numeral from 'numeral';
 
+import { LayoutContext } from '../../../contexts/LayoutContext';
+
+import useHeightCalc from '../../../utils/useHeightCalc';
 import apiRequest from '../../../utils/apiRequest';
 import useFetch from '../../../utils/useFetch';
-import calculateLines from '../../../utils/textHeightCalc';
 
 import './_thumbnail.scss';
 
@@ -66,6 +68,7 @@ const Thumbnail = (props) => {
     const [channelIcon, setChannelIcon] = useState();
     const [isLoading, setIsLoading] = useState(true);
     const [descDivider, setDescDivider] = useState(description.length);
+    const {layout:{sideBarOpen}} = useContext(LayoutContext);
     const textNode = useRef();
     const navigate = useNavigate();
 
@@ -103,6 +106,8 @@ const Thumbnail = (props) => {
 
     useFetch(doFetchChannelLogo, channelId, setIsLoading, [videoId]);
 
+    useHeightCalc(textNode, setDescDivider, description, type, [sideBarOpen, description]);
+
     const goToWatch = () => {
         (modifier === "_channel") ?
         navigate(`/channel/${videoId}`)
@@ -112,14 +117,6 @@ const Thumbnail = (props) => {
     const goToChannel = () => {
         navigate(`/channel/${channelId}`);
     };
-
-    useLayoutEffect(() => {
-        const textWidth = textNode.current?.offsetWidth;
-        const widthAmend = document.documentElement.clientWidth > 768 ? 0 : 2;
-        (type === 'horizontal') ?
-        setDescDivider(calculateLines(description, (6 - widthAmend), textWidth, 16))
-        :setDescDivider(calculateLines(description, (3 - widthAmend ), textWidth, 16));
-    }, [video, description]);
 
     return (
         <section className={'thumbnail_'+type}>

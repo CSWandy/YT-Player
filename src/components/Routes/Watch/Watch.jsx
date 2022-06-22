@@ -65,7 +65,7 @@ const Watch = () => {
         document.title = `Play - ${items[0]?.snippet.title ? items[0].snippet.title : ''}`;
     };
 
-    useFetch(doFetch, vidId, setIsLoading, [vidId]);
+    useFetch(doFetch, vidId, setIsLoading, [vidId], true);
 
     return (
         !isLoading && 

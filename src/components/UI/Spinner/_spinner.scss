@@ -19,17 +19,13 @@
 }
 
 .transition {
-    &_container {
-        width: 100%; 
-    }
-
     &-enter {
         opacity: 0;
     }
 
     &-enter-active {
         opacity: 1;
-        transition: opacity 1400ms 700ms;
+        transition: opacity 800ms 1300ms;
     }
 
     &-exit {
@@ -42,6 +38,7 @@
       }
 
       &_pos_abs {
+        width: 100%; 
         position: absolute;
       }
 
@@ -56,7 +53,7 @@
         &-enter-active {
             position: absolute;
             opacity: 1;
-            transition: opacity 1400ms;
+            transition: opacity 1650ms;
         }
 
         &-exit {
@@ -67,7 +64,7 @@
         &-exit-active {
             position: absolute;
             opacity: 0;
-            transition: opacity 1400ms;
+            transition: opacity 1650ms;
         }
     }
 }

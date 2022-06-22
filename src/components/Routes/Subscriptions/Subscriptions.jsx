@@ -32,7 +32,7 @@ const Subscriptions = () => {
     };
      
 
-    useFetch(doFetch, null, setIsLoading, [menuActive]);
+    useFetch(doFetch, null, setIsLoading, [menuActive], true);
 
     return (
         <div className='screen_horizontal'>
@@ -44,7 +44,7 @@ const Subscriptions = () => {
                         unmountOnExit 
                         appear={true} 
                         nodeRef={transitionNodeRef}>    
-                <div ref={transitionNodeRef}>
+                <div ref={transitionNodeRef} className='transition_pos_abs'>
                     <Spinner 
                             qty={4}
                             parent={"ThumbnailPlaylist"}

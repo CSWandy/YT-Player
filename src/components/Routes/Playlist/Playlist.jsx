@@ -40,7 +40,7 @@ const Playlist = () => {
         setVids(PlVids.data.items); 
     };
 
-    useFetch(doFetch, playlistId, setIsLoading, [playlistId]);
+    useFetch(doFetch, playlistId, setIsLoading, [playlistId], true);
 
     useEffect(() => {
         setLayout(prev => ({...prev, menuActive:`Playlists - ${Pl?.snippet?.localized?.title ? Pl.snippet.localized.title : ''}`})); 
@@ -56,7 +56,7 @@ const Playlist = () => {
                         unmountOnExit 
                         appear={true} 
                         nodeRef={transitionNodeRef}>  
-                <div ref={transitionNodeRef} className='transition_lag transition_container'>
+                <div ref={transitionNodeRef} className='transition_pos_abs'>
                     <Spinner 
                             qty={1} 
                             parent={"ThumbnailPlaylist"}
@@ -75,7 +75,7 @@ const Playlist = () => {
                         classNames="transition" 
                         unmountOnExit 
                         nodeRef={transitionNodeRef2}> 
-                <div ref={transitionNodeRef2} className='transition_lag transition_container'>
+                <div ref={transitionNodeRef2} >
                     <ThumbnailPlaylist  
                                     object={Pl}
                                     type='playlist'

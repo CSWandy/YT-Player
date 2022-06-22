@@ -32,7 +32,7 @@ const Liked = () => {
         setVids(items); 
     };
 
-    useFetch(doFetch, null, setIsLoading, [menuActive]);
+    useFetch(doFetch, null, setIsLoading, [menuActive], true);
 
     return ( 
     <>
@@ -44,7 +44,7 @@ const Liked = () => {
                     unmountOnExit 
                     appear={true} 
                     nodeRef={transitionNodeRef}>  
-            <div ref={transitionNodeRef} className='transition_container transition_pos_abs'>
+            <div ref={transitionNodeRef} className='transition_pos_abs'>
                 <Spinner 
                         qty={10}
                         parent={"Thumbnail"}

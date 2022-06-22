@@ -19,6 +19,9 @@ const Layout = () => {
             localStorage.setItem('token', '');
             window.location.reload();
         }
+        if (document.documentElement.clientWidth < 1100) {
+            setLayout(prev =>  ({...prev, sideBarOpen:false}));
+        }
     },[]);
 
     const sidebarHandler = () => {

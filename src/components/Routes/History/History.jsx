@@ -32,7 +32,7 @@ const History = () => {
         setVids(data.items);
         };
 
-    useFetch(doFetch, history, setIsLoading, [menuActive]);
+    useFetch(doFetch, history, setIsLoading, [menuActive], true);
 
     return (
     <div className='screen_horizontal'> 
@@ -43,7 +43,7 @@ const History = () => {
                     classNames="transition_spinner" 
                     unmountOnExit 
                     nodeRef={nodeRef}>   
-            <div ref={nodeRef} className='transition_container transition_lag'>
+            <div ref={nodeRef} className='transition_pos_abs'>
                 <Spinner 
                         qty={4}
                         parent={"Thumbnail"}
@@ -56,7 +56,7 @@ const History = () => {
                     classNames="transition" 
                     unmountOnExit 
                     nodeRef={nodeRef2}> 
-            <div className='transition_container transition_lag' ref={nodeRef2}>
+            <div ref={nodeRef2}>
                 {vids.map((video, index) => 
                     (<Thumbnail 
                             video={video}
