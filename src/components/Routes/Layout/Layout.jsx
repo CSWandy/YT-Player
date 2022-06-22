@@ -14,7 +14,7 @@ const Layout = () => {
     useEffect(() => {
         if (localStorage.getItem('firstUse') !== 'false') {
             localStorage.setItem('history', 'dQw4w9WgXcQ');
-            localStorage.setItem('savedPlaylists', 'PLUnfKbLmlMM5lW9k3i-BMMLC3_5qXk7hF,PLUcXHQ7VorrUQ4VcKSRo598i_8AhQplL_,PLU_aM5EzmeKRZkbmPi7d4-Nz55GxwAHIJ');
+            localStorage.setItem('savedPlaylists', 'PLTMN6OMDTnKmPEshAkltDlfJYLft6taZO,PLUcXHQ7VorrUQ4VcKSRo598i_8AhQplL_,PLU_aM5EzmeKRZkbmPi7d4-Nz55GxwAHIJ');
             localStorage.setItem('firstUse', 'false');
             localStorage.setItem('token', '');
             window.location.reload();
