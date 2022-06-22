@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import calculateLines from './textHeightCalc';
 
-const useHeightCalc = (textNode, setDescDivider, description, type, dependencies) => {
+const useHeightCalc = (textNode, setDescDivider, description, type, dependencies, fSize = 16) => {
   
     return (
         useEffect(() => {
             const width = document.documentElement.clientWidth + 13;
             console.log(width);
             let widthAmend;
-            let fontSize;
+            let fontSize = fSize;
             let lines;
 
             if (typeof(type) === 'number') {
@@ -16,7 +16,6 @@ const useHeightCalc = (textNode, setDescDivider, description, type, dependencies
                 fontSize =  width > 768 ? 20 : 16;
                 widthAmend = 0;
             } else {
-                fontSize = 16;
                 if (type === 'horizontal') {
                     lines = 5;
                     widthAmend = width > 768 ? 0 : 2;

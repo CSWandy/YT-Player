@@ -27,10 +27,11 @@ const Subscriptions = () => {
                 params: {
                     part: 'snippet,contentDetails',
                     mine: true,
-                }});
+                },
+                withToken: true,
+            });
         setSubList(data.items);
     };
-     
 
     useFetch(doFetch, null, setIsLoading, [menuActive], true);
 

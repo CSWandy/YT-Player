@@ -19,7 +19,8 @@ const CommentsAdd = ( { videoId } ) => {
                 params: {
                     part: 'snippet',
                     mine: true,
-                }
+                },
+                withToken: true
             });
 
         setAvatar(data.items[0].snippet.thumbnails);
@@ -27,7 +28,7 @@ const CommentsAdd = ( { videoId } ) => {
 
     useFetch(doFetch, null, setIsLoading, [menuActive]);
 
-    const addCommentHandler = async e => {
+    const addCommentHandler = e => {
         e.preventDefault();
         if (text.length === 0) return
 
@@ -42,12 +43,19 @@ const CommentsAdd = ( { videoId } ) => {
             },
         };
 
-        await apiRequest.post('/commentThreads', 
-            obj, 
-            { params: 
-                { part: 'snippet' },
-        });
-
+        const addComment = () => {
+            try {
+                apiRequest.post('/commentThreads', 
+                    obj, 
+                    { params: 
+                        { part: 'snippet' },
+                    withToken: true });
+            } catch(error) {
+                console.log(error);
+            }
+        }; 
+        
+        addComment();
         setText('');
     };
 

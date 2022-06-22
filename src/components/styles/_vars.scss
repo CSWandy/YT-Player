@@ -4,3 +4,43 @@ $text-color: rgb(226, 226, 226);
 $border-color: rgb(178, 224, 217);
 $breakpoint-small: 640px;
 $breakpoint-medium: 960px;
+
+@mixin details {
+    & details {
+        height: 0;
+        
+        & summary {
+            position: relative;
+            bottom: 20px;
+            height: 20px;
+            width: 100%;
+            
+            &::marker {
+                content: "";
+            }
+            
+            &:after {
+                content: " ";
+                height: 16px;
+                width:  16px;
+                background: no-repeat url(../../assets/icons/png/expand_single.png) center;
+                background-size: 100%;
+                
+                position: absolute;
+                transform: rotate(-90deg);
+                left: -20px;
+                z-index: 99;
+            }
+        }
+
+        &[open] { 
+            height: auto;
+                
+            & summary::after {
+                content: "";
+                display: block;
+                transform: rotate(0deg);
+            }
+        }
+    }
+}

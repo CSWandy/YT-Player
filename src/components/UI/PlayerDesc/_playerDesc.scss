@@ -15,28 +15,27 @@
             display: flex;
 
             &_title {
+                padding: 0;
                 flex: 1;
                 margin: 0px;
-                font-size: 25px;
+                font-size: 27px;
                 letter-spacing: 0.2px; 
             }
             
             &_likes {
-                flex: 1;
-                width: 100%;
                 margin-top: 5px;
+                width: 15%;
             }
         }
 
         &_stats {
-    
+            
         }
     }
 
     &_channel { 
         display: flex;
         padding: 10px;
-
 
         &_image {   
             cursor: pointer;
@@ -51,9 +50,8 @@
             flex-direction: column;
             margin: 10px;
 
-
             &_title {
-                font-size: 25px;
+                font-size: 24px;
                 margin: 5px 0;
             }
             
@@ -66,8 +64,9 @@
     &_description {
         border-bottom: 1px solid $text-color;
         padding: 10px;
-        font-size: 12x;
+        font-size: 18px;
         white-space: pre-wrap;
 
+        @include details;
     }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
+import moment from 'moment';
 
 import './_commentItem.scss';
-
 
 const CommentItem = ( { comment } ) => {
 
@@ -36,7 +36,7 @@ const CommentItem = ( { comment } ) => {
                {authorDisplayName}
             </h6>
             <span className='player_comments_list_item_body_stats'>
-              {publishedAt}
+              {moment(publishedAt).format("MMM Do YYYY")}
             </span>
             <p className='player_comments_list_item_body_text'>{textOriginal}</p>
             {!!totalReplyCount && 

@@ -1,7 +1,9 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import moment from 'moment';
+import numeral from 'numeral';
 
-import calculateLines from '../../../utils/textHeightCalc';
+import useHeightCalc from '../../../utils/useHeightCalc';
 import useFetch from '../../../utils/useFetch';
 import apiRequest from '../../../utils/apiRequest';
 
@@ -33,7 +35,7 @@ const PlayerDesc = ( { video } ) => {
         const { data: { items } } = 
             await apiRequest.get('/channels', {
                 params: {
-                    part: 'snippet',
+                    part: 'snippet,statistics',
                     id: channelId,
                 }
         });
@@ -43,54 +45,54 @@ const PlayerDesc = ( { video } ) => {
 
     useFetch(doFetch, channelId, setIsLoading, []);
 
-    useLayoutEffect(() => {
-        const textWidth = textNode.current?.offsetWidth;
-        setDescDivider(calculateLines(description, 5, textWidth, 12));
-      }, [video]);
+    useHeightCalc(textNode, setDescDivider, description, 'horizontal', [video], 18);
 
-      const goToChannel = () => {
+    const goToChannel = () => {
         navigate(`/channel/${channelId}`);
-      };
+    };
 
-  return (
-    !isLoading &&
-    <div className={'player_desc'}>
-        <div className='player_desc_vid'>
-            <span className='player_desc_vid_headline'> 
-                <h2 className={'player_desc_vid_headline_title'}> {title} </h2>
-                <span className={'player_desc_vid_headline_likes'}>
-                    {likeCount} Likes 
+    const channelSubs = numeral(channel?.statistics?.subscriberCount).format('0.a');
+    const channelVids = numeral(channel?.statistics?.videoCount).format('0.a');
+
+    return (
+        !isLoading &&
+        <div className={'player_desc'}>
+            <div className='player_desc_vid'>
+                <span className='player_desc_vid_headline'> 
+                    <h2 className={'player_desc_vid_headline_title'}> {title} </h2>
+                    <span className={'player_desc_vid_headline_likes'}>
+                        {numeral(likeCount).format('0.a')} Likes 
+                    </span>
                 </span>
-            </span>
-            <span className={'player_desc_vid_stats'}>
-                {viewCount} Views • {publishedAt}   
-            </span>
+                <span className={'player_desc_vid_stats'}>
+                    {numeral(viewCount).format('0.a')} Views • {moment(publishedAt).format("MMM Do YYYY")}   
+                </span>
+            </div>
+        
+            <div className={'player_desc_channel'}>
+                <img 
+                    className='player_desc_channel_image' 
+                    src={channel?.snippet?.thumbnails?.default?.url} 
+                    alt="channel thumbnail" 
+                    onClick={goToChannel}/>
+                <span className='player_desc_channel_desc'>
+                    <h4 className={'player_desc_channel_desc_title'}> {channelTitle} </h4>
+                    <span className={'player_desc_channel_desc_subs'}>
+                        {channelSubs} Subs • {channelVids} Vids   
+                    </span>
+                </span>
+            </div> 
+
+            <div className={'player_desc_description'} ref={textNode}>
+                {description?.slice(0, descDivider)}
+                {(description?.length > descDivider) &&
+                <details>
+                    <summary></summary>
+                    {description?.slice(descDivider)}
+                </details>}  
+            </div> 
         </div>
-      
-        <div className={'player_desc_channel'}>
-            <img 
-                className='player_desc_channel_image' 
-                src={channel?.snippet?.thumbnails?.default?.url} 
-                alt="channel thumbnail" 
-                onClick={goToChannel}/>
-            <span className='player_desc_channel_desc'>
-                <h4 className={'player_desc_channel_desc_title'}> {channelTitle} </h4>
-                <span className={'player_desc_channel_desc_subs'}>
-                    {channel?.statistics?.subscriberCount} Subs • {channel?.statistics?.videoCount} Vids   
-                </span>
-            </span>
-        </div> 
-
-        <div className={'player_desc_description'} ref={textNode}>
-            {description?.slice(0, descDivider)}
-            {(description?.length > descDivider) &&
-            <details>
-                <summary></summary>
-                {description?.slice(descDivider)}
-            </details>}  
-        </div> 
-    </div>
-  )
+    )
 }
 
 export default PlayerDesc

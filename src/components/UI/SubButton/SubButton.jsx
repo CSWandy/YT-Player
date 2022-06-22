@@ -17,7 +17,8 @@ const SubButton = ( { channelItem, channelId } ) => {
             params: {
                 part: 'snippet',
                 mine: true,
-            }
+            },
+            withToken: true,
         });
         setSubscriptions(subList.data.items);
     };
@@ -38,12 +39,14 @@ const SubButton = ( { channelItem, channelId } ) => {
         subscribed[0]?
         
         (await apiRequest.delete('/subscriptions', 
-            {data: {id: subscribed[1]} })
+            {data: {id: subscribed[1]},
+            withToken: true })
         .then(response => {if (response.status === 204) { setSubscriptions([]); }}))
         
         : (await apiRequest.post('/subscriptions', 
             {snippet: {resourceId: { "channelId": channelItem.id}}}, 
-            { params: { part: 'snippet' }})
+            { params: { part: 'snippet' },
+            withToken: true })
         .then(response => {
             if (response.status === 200) {
                  setSubscriptions([...subscriptions, response.data]); 

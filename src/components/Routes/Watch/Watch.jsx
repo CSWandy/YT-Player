@@ -59,7 +59,7 @@ const Watch = () => {
             localStorage.setItem('history', vidId + ',' + history);
         }
 
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         setVideoObject(items[0]);
         setLayout(prev => ({...prev, menuActive: `Play - ${items[0]?.snippet.title ? items[0].snippet.title : ''}`}));
         document.title = `Play - ${items[0]?.snippet.title ? items[0].snippet.title : ''}`;

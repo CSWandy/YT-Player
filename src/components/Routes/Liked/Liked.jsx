@@ -26,8 +26,8 @@ const Liked = () => {
                     { params: {
                         part: 'contentDetails,statistics,snippet',
                         maxResults: 15, 
-                        myRating: 'like'}
-                    });
+                        myRating: 'like'},
+                    withToken: true });
 
         setVids(items); 
     };
