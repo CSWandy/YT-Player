@@ -38,7 +38,7 @@ const Comments = ( { videoId, totalComments } ) => {
         }
     };
 
-    useFetch(doFetch, videoId, setIsLoading, [fireFetch]);
+    useFetch(doFetch, videoId, setIsLoading, [fireFetch], false);
 
     useEffect( () =>  { 
         document.addEventListener('scroll',  scrollHandler);

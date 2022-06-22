@@ -47,7 +47,7 @@ const Search = () => {
         } 
     };
 
-    useFetch(doFetchPage, query, setIsLoading, [fireFetch]);
+    useFetch(doFetchPage, query, setIsLoading, [fireFetch], false);
 
     useEffect( () =>  { 
         setLayout(prev => ({...prev, menuActive:`Search - ${query}`}));   

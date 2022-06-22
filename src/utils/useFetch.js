@@ -2,13 +2,14 @@ import { useContext, useEffect } from 'react';
 import { LayoutContext } from '../contexts/LayoutContext';
 import { googleLogout } from '@react-oauth/google';
 
-const useFetch = (doFetch, url, setIsLoading, dependencies) => {
+const useFetch = (doFetch, url, setIsLoading, dependencies, pageUp = true) => {
 
     const { setLayout } = useContext(LayoutContext);
 
     return useEffect( () => { 
         async function asyncWrapper() {
             try { 
+                if (pageUp) window.scrollTo(0, 0); 
                 setIsLoading(true);
                 await doFetch(url);
                 setIsLoading(false);
