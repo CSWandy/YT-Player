@@ -6,7 +6,6 @@ const useHeightCalc = (textNode, setDescDivider, description, type, dependencies
     return (
         useEffect(() => {
             const width = document.documentElement.clientWidth + 13;
-            console.log(width);
             let widthAmend;
             let fontSize = fSize;
             let lines;
@@ -28,7 +27,6 @@ const useHeightCalc = (textNode, setDescDivider, description, type, dependencies
             setTimeout(() => {
                 const textWidth = textNode.current?.offsetWidth;
                 setDescDivider(calculateLines(description, (lines - widthAmend), textWidth, fontSize));
-                console.log(description.slice(0, 10), calculateLines(description, (lines - widthAmend), textWidth, fontSize));
             }, 1300); 
         }, [...dependencies])
     )

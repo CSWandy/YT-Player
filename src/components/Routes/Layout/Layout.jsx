@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
+import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 
 import Header from '../../UI/Header/Header';
 import Sidebar from '../../UI/Sidebar/Sidebar';
@@ -34,10 +35,12 @@ const Layout = () => {
         <>
             <Header/>
             <Sidebar/>
-            <main   
-                className={sideBarOpen ? 'main_sidebar_open' : 'main_sidebar_closed'}  
-                onClick={sidebarHandler}> 
-                <Outlet/>
+            <main
+            className={sideBarOpen ? 'main_sidebar_open' : 'main_sidebar_closed'}  
+            onClick={sidebarHandler}> 
+                <ErrorBoundary>
+                    <Outlet/>
+                </ErrorBoundary>   
             </main>
         </>
     )

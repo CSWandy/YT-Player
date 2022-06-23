@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { LayoutContext } from '../../../contexts/LayoutContext';
 
+import ImgFailProne from '../ImgFailProne/ImgFailProne';
 import apiRequest from '../../../utils/apiRequest';
 import useFetch from '../../../utils/useFetch';
 
@@ -63,7 +64,10 @@ const CommentsAdd = ( { videoId } ) => {
         !isLoading && 
         <>
             <div className='player_comments_add'>
-                <img src={avatar?.default?.url} alt='avatar' className='player_comments_add_avatar' />
+                <ImgFailProne 
+                    src={avatar?.default?.url} 
+                    alt='avatar' 
+                    className='player_comments_add_avatar' />
                 <form onSubmit={addCommentHandler} className='player_comments_add_form'>
                     <input
                         type='text'

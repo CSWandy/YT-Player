@@ -8,6 +8,7 @@ import useFetch from '../../../utils/useFetch';
 import apiRequest from '../../../utils/apiRequest';
 
 import './_playerDesc.scss';
+import ImgFailProne from '../ImgFailProne/ImgFailProne';
 
 const PlayerDesc = ( { video } ) => {
 
@@ -70,11 +71,11 @@ const PlayerDesc = ( { video } ) => {
             </div>
         
             <div className={'player_desc_channel'}>
-                <img 
+                <ImgFailProne  
                     className='player_desc_channel_image' 
                     src={channel?.snippet?.thumbnails?.default?.url} 
                     alt="channel thumbnail" 
-                    onClick={goToChannel}/>
+                    onClick={goToChannel} />
                 <span className='player_desc_channel_desc'>
                     <h4 className={'player_desc_channel_desc_title'}> {channelTitle} </h4>
                     <span className={'player_desc_channel_desc_subs'}>

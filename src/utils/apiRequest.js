@@ -7,7 +7,7 @@ const apiRequest = axios.create({
     },
     validateStatus: status => { 
         console.log('Response validation: status ', status); 
-        return (status !== 401)}
+        return (status < 400)}
 });
 
 apiRequest.interceptors.request.use(request => {
@@ -26,7 +26,7 @@ apiRequest.interceptors.response.use(response => response,
             console.log('401 intercepted');
             throw error;
         } else {
-            console.log(error);
+            throw error;
         }
 });
 

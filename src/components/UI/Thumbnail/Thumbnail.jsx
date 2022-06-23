@@ -5,6 +5,7 @@ import moment from 'moment';
 import numeral from 'numeral';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
+import ImgFailProne from '../ImgFailProne/ImgFailProne';
 
 import useHeightCalc from '../../../utils/useHeightCalc';
 import apiRequest from '../../../utils/apiRequest';
@@ -123,8 +124,14 @@ const Thumbnail = (props) => {
             <div className={'thumbnail_'+type+'_head'}
                  onClick={goToWatch}>
                 {(type === 'horizontal') ?
-                <img src={medium.url} alt="thumbnail" className={'thumbnail_'+type+'_head_image'+modifier}/>
-                :<img src={high.url}  alt="thumbnail" className={'thumbnail_'+type+'_head_image'}/>}
+                <ImgFailProne
+                    src={medium.url} 
+                    alt="thumbnail" 
+                    className={'thumbnail_'+type+'_head_image'+modifier} />
+                :<ImgFailProne 
+                    src={high.url} 
+                    alt="thumbnail" 
+                    className={'thumbnail_'+type+'_head_image'} />}
                 <span className={'thumbnail_'+type+'_head_duration'}>
                     {!!duration && !modifier && duration}
                 </span>
@@ -140,7 +147,10 @@ const Thumbnail = (props) => {
                 
                 {showChannel && !modifier && !isLoading &&
                 (<div className={'thumbnail_'+type+'_channel'} onClick={goToChannel}>
-                    <img src={channelIcon?.url} alt="channel thumb" className={'thumbnail_'+type+'_channel_image'}/>
+                    <ImgFailProne 
+                        src={channelIcon?.url} 
+                        alt="channel thumb" 
+                        className={'thumbnail_'+type+'_channel_image'} />
                     <h4 className={'thumbnail_'+type+'_channel_title'}>{channelTitle}</h4>
                 </div> )}
 

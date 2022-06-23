@@ -40,7 +40,7 @@ const Sidebar = () => {
         setPlFiltered(items);
     };
 
-    useFetch(doFetch, savedPl, setIsLoading, [savedPl]);
+    useFetch(doFetch, savedPl, setIsLoading, [savedPl], false, true);
 
     const dropDownHandler = e => {
         e.preventDefault();

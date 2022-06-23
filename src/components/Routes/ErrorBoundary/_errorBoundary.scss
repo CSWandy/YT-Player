@@ -1,0 +1,76 @@
+.error_boundary {
+    padding-top: 1.5%;
+    padding-left: 3%;
+    width: min(90vw, 900px);
+
+    &_message {
+        margin: 0;
+        margin-bottom: 15px;
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    &_code {
+        font-size: 25px;
+        margin: 0;
+        margin-bottom: 25px;
+    }
+
+    &_speech {
+        margin: 0;
+        margin-bottom: 5px;
+        padding-left: 20px;
+        position: relative;
+        font-size: 24px;
+        display: block;
+        letter-spacing: 0.5px;
+
+        &::before{
+            content: "- ";
+            position: absolute;
+            left: 5px;
+        }
+    }
+
+    &_body {
+        display: grid;
+        place-content: center;
+        width: 50%;
+        text-decoration: none;
+
+        &_image {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        &_button {
+            background-color: black;
+            border: 1px inset white;
+            border-radius: 3px;
+            color: white;
+            font-size: 20px;
+            padding: 5px;
+            margin: auto;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .error_boundary {
+        &_message { 
+            font-size: 25px; 
+            margin-bottom: 10px;
+        }
+
+        &_code {
+            font-size: 20px; 
+            margin-bottom: 15px;
+        }
+
+        &_speech { 
+            font-size: 19px;  
+        }
+
+    }
+}
+

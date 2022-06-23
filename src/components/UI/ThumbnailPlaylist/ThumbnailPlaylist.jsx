@@ -2,6 +2,7 @@ import React, { useState, useRef, useContext } from 'react';
 import parse from 'html-react-parser';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
+import ImgFailProne from '../ImgFailProne/ImgFailProne';
 import SubButton from '../SubButton/SubButton';
 
 import { useNavigate } from "react-router-dom";
@@ -65,9 +66,9 @@ const ThumbnailPlaylist = ({ object, type, activeLink = true, search = false, li
     return (
         <section className={'horizontal_thumbnail'} >
             <div className='horizontal_thumbnail_head'>
-        <img 
+        <ImgFailProne 
             className={'horizontal_thumbnail_head_image_'+type+(activeLink? ' horizontal_thumbnail_head_image_link' : '')} 
-            src={medium.url} 
+            src="{medium.url}" 
             alt={type+title} 
             onClick={thumbnailLinkHandler}/>
         {type === 'playlist' && 

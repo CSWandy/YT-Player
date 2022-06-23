@@ -1,5 +1,6 @@
 import React from 'react';
 
+import ImgFailProne from '../ImgFailProne/ImgFailProne';
 import SubButton from '../SubButton/SubButton';
 
 import './_channelScreenHeader.scss';
@@ -8,7 +9,7 @@ const ChannelScreenHeader = ( { channelItem, channelId } ) => {
 
     return (
         <div className='channel_screen_header'>
-            <img src={channelItem?.snippet?.thumbnails?.medium?.url} 
+            <ImgFailProne src={channelItem?.snippet?.thumbnails?.medium?.url} 
                 alt='channel logo' 
                 className='channel_screen_header_logo'/>
             <div className='channel_screen_header_description'>

@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 
 import './_commentItem.scss';
+import ImgFailProne from '../ImgFailProne/ImgFailProne';
 
 const CommentItem = ( { comment } ) => {
 
@@ -21,10 +22,10 @@ const CommentItem = ( { comment } ) => {
   return (
     <div className='player_comments_list_item'>
          <div className='player_comments_list_item_side'>
-            <img 
+            <ImgFailProne 
                 src={authorProfileImageUrl}
                 alt='avatar'
-                className='player_comments_list_item_side_image'/>
+                className='player_comments_list_item_side_image' />
             {!!likeCount && 
             <span className='player_comments_list_item_side_likes'>
                {likeCount} {(likeCount === 1)? 'Like' : 'Likes'}
