@@ -68,7 +68,7 @@ const ThumbnailPlaylist = ({ object, type, activeLink = true, search = false, li
             <div className='horizontal_thumbnail_head'>
         <ImgFailProne 
             className={'horizontal_thumbnail_head_image_'+type+(activeLink? ' horizontal_thumbnail_head_image_link' : '')} 
-            src="{medium.url}" 
+            src={medium.url} 
             alt={type+title} 
             onClick={thumbnailLinkHandler}/>
         {type === 'playlist' && 
