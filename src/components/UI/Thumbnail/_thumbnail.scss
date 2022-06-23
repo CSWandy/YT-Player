@@ -23,7 +23,8 @@
         &_image {
             width: 100%;
 
-            &[data-failed]{
+            &[data-failed],
+            &_channel[data-failed] {
                 width: 65%;
                 transform: translateY(10px);
             }
