@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
@@ -7,6 +7,7 @@ import Spinner from '../../UI/Spinner/Spinner';
 
 import apiRequest from '../../../utils/apiRequest';
 import useFetch from '../../../utils/useFetch';
+import useSetTitle from '../../../utils/useSetTitle';
 
 const Playlists = () => {
 
@@ -17,12 +18,7 @@ const Playlists = () => {
     const { layout: {menuActive}, setLayout } = useContext(LayoutContext);
     const savedPl = localStorage.getItem('savedPlaylists');
 
-    useEffect(() => {
-        setLayout(prev => ({...prev, menuActive:`Playlists`})); 
-        document.title = 'Playlists';
-    }, []);
-
-    const doFetch = async savedPl => {
+    const doFetch = useCallback( async savedPl => {
             const { data: { items } } = 
                 await apiRequest.get('/playlists', 
                     { params: { 
@@ -31,9 +27,10 @@ const Playlists = () => {
                     });
             setPl(items);
             setIsLoading(false);
-    };
+    }, []);
 
-    useFetch(doFetch, savedPl, setIsLoading, [menuActive], true);
+    useSetTitle('playlists', '', [], setLayout);
+    useFetch(doFetch, [savedPl], setIsLoading, [menuActive], true);
 
     return (
         <div className='screen_horizontal'> 

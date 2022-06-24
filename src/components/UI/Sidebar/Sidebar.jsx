@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import ThumbnailPlaylistMini from '../ThumbnailPlaylistMini/ThumbnailPlaylistMini';
@@ -28,7 +28,7 @@ const Sidebar = () => {
     const { layout:{ sideBarOpen, plDropDownOpen }, setLayout } = useContext(LayoutContext);
     const savedPl = localStorage.getItem('savedPlaylists');
 
-    const doFetch = async PlIds => {
+    const doFetch = useCallback( async PlIds => {
         const { data: { items } } = 
             await apiRequest.get('/playlists', 
             { params: { 
@@ -38,9 +38,9 @@ const Sidebar = () => {
             
         setPlData(items);
         setPlFiltered(items);
-    };
+    }, []);
 
-    useFetch(doFetch, savedPl, setIsLoading, [savedPl], false, true);
+    useFetch(doFetch, [savedPl], setIsLoading, [savedPl], false, true);
 
     const dropDownHandler = e => {
         e.preventDefault();

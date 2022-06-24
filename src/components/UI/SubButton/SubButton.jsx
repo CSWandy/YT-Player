@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useCallback } from 'react';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
 
@@ -13,7 +13,7 @@ const SubButton = ( { channelItem, channelId, setSubscribedParent = () => {} } )
     const [subscribed, setSubscribed ] = useState([false]);
     const { layout: {loggedIn} } = useContext(LayoutContext);
     
-    const doFetch = async () => {
+    const doFetch = useCallback( async () => {
         const subList = await apiRequest.get('/subscriptions', {
             params: {
                 part: 'snippet',
@@ -22,9 +22,9 @@ const SubButton = ( { channelItem, channelId, setSubscribedParent = () => {} } )
             withToken: true,
         });
         setSubscriptions(subList.data.items);
-    };
+    }, []);
 
-    useFetch(doFetch, null, setIsLoading, [channelId]);
+    useFetch(doFetch, [], setIsLoading, [channelId]);
 
     useEffect(() => {
         if (subscriptions) {

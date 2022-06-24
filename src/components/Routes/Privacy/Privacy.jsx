@@ -1,15 +1,13 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { LayoutContext } from '../../../contexts/LayoutContext';
+import useSetTitle from '../../../utils/useSetTitle';
 
 import './_privacy.scss';
 
 const Privacy = () => {
   const { setLayout } = useContext(LayoutContext); 
 
-  useEffect(() => {
-      setLayout(prev => ({...prev, menuActive: `Privacy`}));
-      document.title = 'Privacy info';
-  }, []);
+  useSetTitle('privacy', '', [], setLayout);
   
   return (
     <div className='privacy'>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useRef } from 'react';
+import { useState, useContext, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 
@@ -7,6 +7,7 @@ import ChannelScreenHeader from '../../UI/ChannelScreenHeader/ChannelScreenHeade
 import Thumbnail from '../../UI/Thumbnail/Thumbnail';
 import Spinner from '../../UI/Spinner/Spinner';
 
+import useSetTitle from '../../../utils/useSetTitle';
 import useFetch from '../../../utils/useFetch';
 import apiRequest from '../../../utils/apiRequest';
 
@@ -18,14 +19,8 @@ const Channel = () => {
     const transitionNodeRef = useRef();
     const transitionNodeRef2 = useRef();
     const { setLayout } = useContext(LayoutContext);
-
-    useEffect( () => {
-        setLayout(prev => ({...prev, menuActive:`Channel - ${channelItem?.snippet?.title ? channelItem.snippet.title : ''}`})); 
-        document.title = `Channel - ${channelItem?.snippet?.title ? channelItem.snippet.title : ''}`;
-    }, [channelItem]);
-
     
-    const doFetch = async channelId => {
+    const doFetch = useCallback( async channelId => {
         const { data: { items } } = 
             await apiRequest.get('/channels', 
                 { params: {
@@ -45,9 +40,10 @@ const Channel = () => {
             });
 
         setVids(data.items); 
-    };
+    }, []);
 
-    useFetch(doFetch, channelId, setIsLoading, [channelId], true);
+    useFetch(doFetch, [channelId], setIsLoading, [channelId], true);
+    useSetTitle('channel', channelItem?.snippet?.title, [channelItem], setLayout);
 
     return (
         <>

@@ -4,7 +4,7 @@ import { googleLogout } from '@react-oauth/google';
 
 import useAsyncError from './useAsyncError';
 
-const useFetch = (doFetch, url, setIsLoading, dependencies, pageUp = false, noThrow = false) => {
+const useFetch = (doFetch, params, setIsLoading, dependencies, pageUp = false, noThrow = false) => {
 
     const { setLayout } = useContext(LayoutContext);
     const throwError = useAsyncError();
@@ -14,7 +14,7 @@ const useFetch = (doFetch, url, setIsLoading, dependencies, pageUp = false, noTh
             try { 
                 if (pageUp) window.scroll({ top: 0, behavior: 'smooth' });
                 setIsLoading(true);
-                await doFetch(url);
+                await doFetch(...params);
                 setIsLoading(false);
             } catch (error) {   
                 const message = error?.response?.data?.error?.message;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useContext, useRef, useCallback } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
@@ -7,6 +7,7 @@ import Spinner from '../../UI/Spinner/Spinner';
 
 import apiRequest from '../../../utils/apiRequest';
 import useFetch from '../../../utils/useFetch';
+import useSetTitle from '../../../utils/useSetTitle';
 
 const Subscriptions = () => {
 
@@ -15,13 +16,8 @@ const Subscriptions = () => {
     const transitionNodeRef = useRef();
     const transitionNodeRef2 = useRef();
     const { layout: {menuActive}, setLayout } = useContext(LayoutContext);
-
-    useEffect(() => {
-        setLayout(prev => ({...prev, menuActive:`Subscriptions`})); 
-        document.title = `Subscriptions`;
-    }, []);
     
-    const doFetch = async () => {
+    const doFetch = useCallback( async () => {
         const { data } = 
             await apiRequest.get('/subscriptions', {
                 params: {
@@ -31,9 +27,10 @@ const Subscriptions = () => {
                 withToken: true,
             });
         setSubList(data.items);
-    };
+    }, []);
 
-    useFetch(doFetch, null, setIsLoading, [menuActive], true);
+    useSetTitle('subscriptions', '', [], setLayout);
+    useFetch(doFetch, [], setIsLoading, [menuActive], true);
 
     return (
         <div className='screen_horizontal'>

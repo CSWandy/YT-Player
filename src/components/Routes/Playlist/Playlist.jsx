@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 
@@ -9,6 +9,7 @@ import Spinner from '../../UI/Spinner/Spinner';
 
 import apiRequest from '../../../utils/apiRequest'; 
 import useFetch from '../../../utils/useFetch';
+import useSetTitle from '../../../utils/useSetTitle';
 
 const Playlist = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +20,7 @@ const Playlist = () => {
     const { setLayout } = useContext(LayoutContext);
     const { playlistId } = useParams();
 
-    const doFetch = async playlistId => {
+    const doFetch = useCallback( async playlistId => {
         const { data: { items } } = 
             await apiRequest.get('/playlists', 
                 { params: {
@@ -38,14 +39,10 @@ const Playlist = () => {
         
         setPl(items[0]);
         setVids(PlVids.data.items); 
-    };
+    }, []);
 
-    useFetch(doFetch, playlistId, setIsLoading, [playlistId], true);
-
-    useEffect(() => {
-        setLayout(prev => ({...prev, menuActive:`Playlists - ${Pl?.snippet?.localized?.title ? Pl.snippet.localized.title : ''}`})); 
-        document.title = `Playlists - ${Pl?.snippet?.localized?.title ? Pl.snippet.localized.title : ''}`;
-    }, [Pl]);
+    useFetch(doFetch, [playlistId], setIsLoading, [playlistId], true);
+    useSetTitle('playlist', Pl?.snippet?.localized?.title, [Pl], setLayout);
     
     return (
         <div className='screen_horizontal'>

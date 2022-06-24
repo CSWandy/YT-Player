@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player/youtube';
 import merge from 'deepmerge';
@@ -10,6 +10,7 @@ import { LayoutContext } from '../../../contexts/LayoutContext';
 
 import apiRequest from '../../../utils/apiRequest';
 import useFetch from '../../../utils/useFetch';
+import useSetTitle from '../../../utils/useSetTitle';
 
 import './_watch.scss';
 
@@ -45,7 +46,7 @@ const Watch = () => {
         playerConfig = merge(playerConfig, {youtube: { playerVars: { listType:"playlist", list:locationHash }}});
     }
 
-    const doFetch = async vidId => {
+    const doFetch = useCallback( async vidId => {
         const { data : { items } } = 
             await apiRequest.get('/videos', {
                 params: {
@@ -61,11 +62,10 @@ const Watch = () => {
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setVideoObject(items[0]);
-        setLayout(prev => ({...prev, menuActive: `Play - ${items[0]?.snippet.title ? items[0].snippet.title : ''}`}));
-        document.title = `Play - ${items[0]?.snippet.title ? items[0].snippet.title : ''}`;
-    };
+    }, []);
 
-    useFetch(doFetch, vidId, setIsLoading, [vidId], true);
+    useFetch(doFetch, [vidId], setIsLoading, [vidId], true);
+    useSetTitle('watch', videoObject?.snippet?.title, [videoObject], setLayout);
 
     return (
         !isLoading && 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useCallback } from 'react';
 import { useNavigate } from "react-router-dom";
 import parse from 'html-react-parser';
 import moment from 'moment';
@@ -73,7 +73,7 @@ const Thumbnail = (props) => {
     const textNode = useRef();
     const navigate = useNavigate();
 
-    const doFetchStats = async videoId => {
+    const doFetchStats = useCallback( async videoId => {
         if (showStats && videoId) {
             const { data: { items } } = 
                 await apiRequest.get('/videos', {
@@ -87,26 +87,24 @@ const Thumbnail = (props) => {
             setDuration(durationFormatted);
             setViews(items[0]?.statistics?.viewCount); 
         }
-    };
-
-    useFetch(doFetchStats, videoId, () => {}, [videoId]);
-
-    const doFetchChannelLogo = async channelId => {
+    }, []);
+    
+    const doFetchChannelLogo = useCallback( async channelId => {
         if (showChannel) {
             const { data: { items } } = 
-                await apiRequest.get('/channels', {
-                    params: {
-                        part: 'snippet',
-                        id: channelId,
-                    }
-                });
+            await apiRequest.get('/channels', {
+                params: {
+                    part: 'snippet',
+                    id: channelId,
+                }
+            });
             
             setChannelIcon(items[0].snippet.thumbnails.default);
         }
-    };
-
-    useFetch(doFetchChannelLogo, channelId, setIsLoading, [videoId]);
-
+    }, []);
+    
+    useFetch(doFetchStats, [videoId], () => {}, [videoId]);
+    useFetch(doFetchChannelLogo, [channelId], setIsLoading, [videoId]);
     useHeightCalc(textNode, setDescDivider, description, type, [sideBarOpen, description]);
 
     const goToWatch = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useCallback } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
@@ -7,6 +7,7 @@ import Spinner from '../../UI/Spinner/Spinner';
 
 import apiRequest from '../../../utils/apiRequest';
 import useFetch from '../../../utils/useFetch';
+import useSetTitle from '../../../utils/useSetTitle';
 
 const History = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -16,12 +17,8 @@ const History = () => {
     const { layout: { menuActive }, setLayout } = useContext(LayoutContext);
     const history = localStorage.getItem('history').split(',').filter(id => (id !== 'undefined'));
 
-    useEffect(() => {
-        setLayout(prev => ({...prev, menuActive: `History`}));
-        document.title = 'History';
-    }, []);
 
-    const doFetch = async history => {
+    const doFetch = useCallback( async history => {
         const { data } = await apiRequest.get('/videos', {
             params: {
                 part: 'contentDetails,statistics,snippet',
@@ -30,9 +27,10 @@ const History = () => {
         });
 
         setVids(data.items);
-        };
+    }, []);
 
-    useFetch(doFetch, history, setIsLoading, [menuActive], true);
+    useSetTitle('history', '', [], setLayout);
+    useFetch(doFetch, [history], setIsLoading, [menuActive], true);
 
     return (
     <div className='screen_horizontal'> 

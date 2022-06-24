@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 
@@ -7,8 +7,9 @@ import Thumbnail from '../../UI/Thumbnail/Thumbnail';
 import Spinner from '../../UI/Spinner/Spinner';
 import { LayoutContext } from '../../../contexts/LayoutContext';
 
-import apiRequest from '../../../utils/apiRequest';
+import useSetTitle from '../../../utils/useSetTitle';
 import useFetch from '../../../utils/useFetch';
+import apiRequest from '../../../utils/apiRequest';
 import throttle from '../../../utils/throttle';
 
 const Search = () => {
@@ -22,8 +23,30 @@ const Search = () => {
     const transitionNodeRef = useRef();
     const transitionNodeRef2 = useRef();
     const { layout: { menuActive }, setLayout } = useContext(LayoutContext);
+        
+    const doFetchFirst = useCallback( async query => {
+        const { data } = 
+            await apiRequest.get('/search', {
+                params: {
+                    part: 'snippet',
+                    type:'video,channel,playlist',
+                    maxResults: 16,
+                    q: query, 
+                }
+            });
+        
+        if (data.nextPageToken) {
+            setNextPage(data.nextPageToken);
+        } else {
+            setNextPage('');
+            setIsLastPage(true);
+        }
 
-    const doFetchPage = async query => {
+        setSearchRes(data.items);
+        setFireFetch(false);
+    }, []);
+    
+    const doFetchPage = useCallback( async (query, nextPage) => {
         if (fireFetch && !isLastPage) {
             const { data } = 
                 await apiRequest.get('/search', {
@@ -45,51 +68,24 @@ const Search = () => {
             }
             setFireFetch(false);
         } 
-    };
+    }, [fireFetch, isLastPage, searchRes]);
 
-    useFetch(doFetchPage, query, setIsLoading, [fireFetch]);
-
-    useEffect( () =>  { 
-        setLayout(prev => ({...prev, menuActive:`Search - ${query}`}));   
-        document.title = `Search - ${query}`;
-    }, [query]);
-        
-    const doFetchFirst = async query => {
-        const { data } = 
-            await apiRequest.get('/search', {
-                params: {
-                    part: 'snippet',
-                    type:'video,channel,playlist',
-                    maxResults: 16,
-                    q: query, 
-                }
-            });
-        
-        if (data.nextPageToken) {
-            setNextPage(data.nextPageToken);
-        } else {
-            setNextPage('');
-            setIsLastPage(true);
-        }
-
-        setSearchRes(data.items);
-        setFireFetch(false);
-    };
-
-    useFetch(doFetchFirst, query, setIsLoading, [query, menuActive]);
+    useSetTitle('search', query, [query], setLayout);
+    useFetch(doFetchFirst, [query], setIsLoading, [query, menuActive]);
+    useFetch(doFetchPage, [query, nextPage], setIsLoading, [fireFetch]);
 
     useEffect( () =>  { 
         document.addEventListener('scroll',  scrollHandler);
         return () => document.removeEventListener('scroll', scrollHandler)
     }, []);
 
-    const scrollHandler = throttle(function(e) {
+    const scrollHandler = useCallback( throttle(function(e) {
         console.log('handling');
         if((e.target.documentElement.scrollHeight - 
             (e.target.documentElement.scrollTop + window.innerHeight) < 50)) {
                 setFireFetch(true);
         }
-    }, 2000)
+    }, 2000), []);
 
     return (
         <div className='screen_horizontal'>

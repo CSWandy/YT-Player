@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import moment from 'moment';
 import numeral from 'numeral';
@@ -33,7 +33,7 @@ const PlayerDesc = ( { video } ) => {
     const textNode = useRef();
     const navigate = useNavigate();
 
-    const doFetch = async channelId => {
+    const doFetch = useCallback( async channelId => {
         const { data: { items } } = 
             await apiRequest.get('/channels', {
                 params: {
@@ -43,9 +43,9 @@ const PlayerDesc = ( { video } ) => {
         });
 
         setChannel(items[0]);
-    };
+    }, []);
 
-    useFetch(doFetch, channelId, setIsLoading, []);
+    useFetch(doFetch, [channelId], setIsLoading, []);
 
     useHeightCalc(textNode, setDescDivider, description, 'horizontal', [video], 18);
 

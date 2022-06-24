@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import CommentItem from '../CommentItem/CommentItem';
 import CommentsAdd from '../CommentsAdd/CommentsAdd';
@@ -17,7 +17,7 @@ const Comments = ( { videoId, totalComments } ) => {
     const [isLastPage, setIsLastPage] = useState(false);
     const [fireFetch, setFireFetch] = useState(true);
 
-    const doFetch = async videoId => {
+    const doFetch = useCallback( async (videoId, nextPage) => {
         if (fireFetch && !isLastPage) { 
             const { data } = await apiRequest.get('/commentThreads', {
                     params: {
@@ -36,9 +36,9 @@ const Comments = ( { videoId, totalComments } ) => {
             }
             setFireFetch(false);
         }
-    };
+    }, [fireFetch, isLastPage, comments]);
 
-    useFetch(doFetch, videoId, setIsLoading, [fireFetch], false);
+    useFetch(doFetch, [videoId, nextPage], setIsLoading, [fireFetch], false);
 
     useEffect( () =>  { 
         document.addEventListener('scroll',  scrollHandler);

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
@@ -7,6 +7,7 @@ import Spinner from '../../UI/Spinner/Spinner';
 
 import apiRequest from '../../../utils/apiRequest';
 import useFetch from '../../../utils/useFetch';
+import useSetTitle from '../../../utils/useSetTitle';
 
 const Liked = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -15,12 +16,7 @@ const Liked = () => {
     const transitionNodeRef2 = useRef();
     const { layout: { menuActive }, setLayout } = useContext(LayoutContext);
 
-    useEffect(() => {
-        setLayout(prev => ({...prev, menuActive: `Liked`}));
-        document.title = 'Liked';
-    }, []);
-
-    const doFetch = async () => {
+    const doFetch = useCallback( async () => {
         const { data: { items } } = 
                 await apiRequest.get('/videos', 
                     { params: {
@@ -30,9 +26,10 @@ const Liked = () => {
                     withToken: true });
 
         setVids(items); 
-    };
+    }, []);
 
-    useFetch(doFetch, null, setIsLoading, [menuActive], true);
+    useSetTitle('liked', '', [], setLayout);
+    useFetch(doFetch, [], setIsLoading, [menuActive], true);
 
     return ( 
     <>

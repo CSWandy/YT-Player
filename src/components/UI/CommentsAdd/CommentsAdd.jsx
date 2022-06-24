@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { LayoutContext } from '../../../contexts/LayoutContext';
 
 import ImgFailProne from '../ImgFailProne/ImgFailProne';
@@ -14,7 +14,7 @@ const CommentsAdd = ( { videoId } ) => {
     const [isLoading, setIsLoading] = useState(true);
     const { layout: { menuActive }, setLayout } = useContext(LayoutContext);
 
-    const doFetch = async () => {      
+    const doFetch = useCallback( async () => {      
         const { data } = 
             await apiRequest.get('/channels', {
                 params: {
@@ -25,9 +25,9 @@ const CommentsAdd = ( { videoId } ) => {
             });
 
         setAvatar(data.items[0].snippet.thumbnails);
-    };
+    }, []);
 
-    useFetch(doFetch, null, setIsLoading, [menuActive]);
+    useFetch(doFetch, [], setIsLoading, [menuActive]);
 
     const addCommentHandler = e => {
         e.preventDefault();

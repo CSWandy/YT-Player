@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import moment from 'moment';
 import numeral from 'numeral';
@@ -52,7 +52,7 @@ const Thumbnail = (props) => {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
-    const doFetch = async videoId => {
+    const doFetch = useCallback( async videoId => {
         const { data: { items } } = 
             await apiRequest.get('/videos', {
                 params: {
@@ -64,9 +64,9 @@ const Thumbnail = (props) => {
         const durationFormatted = moment.utc(seconds * 1000).format('mm:ss');
         setDuration(durationFormatted);
         setViews(items[0].statistics.viewCount);
-    };
+    }, []);
  
-    useFetch(doFetch, videoId, setIsLoading, [video, videoId]);
+    useFetch(doFetch, [videoId], setIsLoading, [video, videoId]);
 
     const goToWatch = () => {
         (modifier === "_channel") ?
