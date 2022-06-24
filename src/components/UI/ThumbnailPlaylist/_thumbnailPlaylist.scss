@@ -13,9 +13,12 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        
+        .faded {
+            filter: grayscale(75%) blur(1px);
+        }
 
         &_image {
-            
             &_link {
                 cursor: pointer;
             }
@@ -28,6 +31,7 @@
                 height: 180px;
                 width: 180px;
                 clip-path: ellipse(90px 90px);
+                transition: filter 1s;
             }
 
             &_spinner {

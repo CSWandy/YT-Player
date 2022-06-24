@@ -122,7 +122,7 @@ const Search = () => {
                                         type='playlist'
                                         key={searchItem.id.playlistId}
                                         lines={8}
-                                        search/>
+                                        searchScreen/>
                         :<Thumbnail video={searchItem}
                                     key={searchItem.id.videoId || searchItem.id.channelId}
                                     type="horizontal" 

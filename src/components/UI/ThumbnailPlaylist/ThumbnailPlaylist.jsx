@@ -10,7 +10,7 @@ import useHeightCalc from '../../../utils/useHeightCalc';
 
 import './_thumbnailPlaylist.scss';
 
-const ThumbnailPlaylist = ({ object, type, activeLink = true, search = false, lines = 6}) => {
+const ThumbnailPlaylist = ({ object, type, activeLink = true, searchScreen = false, lines = 6}) => {
     const {
         id,
         snippet: {
@@ -33,7 +33,7 @@ const ThumbnailPlaylist = ({ object, type, activeLink = true, search = false, li
         if (activeLink) {
             switch(type) {
                 case 'playlist': 
-                    search ?
+                    searchScreen ?
                     navigate(`/playlist/${id.playlistId}`)
                     :navigate(`/playlist/${id}`);
                     break;
@@ -53,40 +53,55 @@ const ThumbnailPlaylist = ({ object, type, activeLink = true, search = false, li
 
     const saveHandler = () => {
         savedPl =  localStorage.getItem('savedPlaylists');
-        search?
-            isSaved ?
-                localStorage.setItem('savedPlaylists', savedPl.split(',').filter(pl => (pl !== id.playlistId)).join(','))
-                :localStorage.setItem('savedPlaylists', id.playlistId + ',' + savedPl)
-            :isSaved ?
-                localStorage.setItem('savedPlaylists', savedPl.split(',').filter(pl => (pl !== id)).join(','))
-                :localStorage.setItem('savedPlaylists', id + ',' + savedPl);
+        let idField;
+
+        searchScreen?
+        idField = id.playlistId
+        :idField = id;
+
+        isSaved ?
+        localStorage.setItem('savedPlaylists', savedPl.split(',').filter(pl => (pl !== idField)).join(','))
+        :localStorage.setItem('savedPlaylists', idField + ',' + savedPl)
         setIsSaved(!isSaved);
     };
  
     return (
         <section className={'horizontal_thumbnail'} >
             <div className='horizontal_thumbnail_head'>
-        <ImgFailProne 
-            className={'horizontal_thumbnail_head_image_'+type+(activeLink? ' horizontal_thumbnail_head_image_link' : '')} 
-            src={medium.url} 
-            alt={type+title} 
-            onClick={thumbnailLinkHandler}/>
-        {type === 'playlist' && 
-        <button className='horizontal_thumbnail_head_button' onClick={saveHandler}> {isSaved? 'Unsave' : 'Save'} </button>}
-        {type === 'channel' && 
-        <SubButton channelItem={object} channelId={object.snippet.resourceId.channelId}/>}
-        </div>
-        <div className='horizontal_thumbnail_description'>
-            <h3 className='horizontal_thumbnail_description_title'>{parse(title)}</h3>
-            <div className='horizontal_thumbnail_description_text'>
-                <span ref={textNode}>{description ? description?.slice(0, descDivider) : "No words, no thoughts..."}</span>
-                {(description?.length > descDivider) &&
-                <details>
-                    <summary></summary>
-                    {description?.slice(descDivider)}
-                </details>}   
+                <ImgFailProne 
+                    className={'horizontal_thumbnail_head_image_' + type + 
+                        (!searchScreen && isSaved ? '' : ' faded'  ) + 
+                        (activeLink ? ' horizontal_thumbnail_head_image_link' : '') } 
+                    src={medium.url} 
+                    alt={type+title} 
+                    onClick={thumbnailLinkHandler}/>
+                
+                {type === 'playlist' && 
+                <button 
+                    className='horizontal_thumbnail_head_button' 
+                    onClick={saveHandler}> 
+                    {isSaved? 'Unsave' : 'Save'} 
+                </button>}
+                
+                {type === 'channel' && 
+                <SubButton 
+                    channelItem={object} 
+                    channelId={object.snippet.resourceId.channelId}
+                    setSubscribedParent={setIsSaved} />}
             </div>
-        </div>
+            <div className='horizontal_thumbnail_description'>
+                <h3 className='horizontal_thumbnail_description_title'>{parse(title)}</h3>
+                <div className='horizontal_thumbnail_description_text'>
+                    <span ref={textNode}>
+                        {description ? description?.slice(0, descDivider) : "No words, no thoughts..."}
+                    </span>
+                    {(description?.length > descDivider) &&
+                    <details>
+                        <summary></summary>
+                        {description?.slice(descDivider)}
+                    </details>}   
+                </div>
+            </div>
         </section>
         )
 }
