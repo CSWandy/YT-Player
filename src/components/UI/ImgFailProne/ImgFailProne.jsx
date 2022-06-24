@@ -1,6 +1,6 @@
 import React from 'react';
 
-import spinner from '../../../assets/icons/png/spinner.png';
+import spinner from '../../../assets/images/png/spinner.png';
 import './_imgFailProne.scss';
 
 const ImgFailProne = (props) => {

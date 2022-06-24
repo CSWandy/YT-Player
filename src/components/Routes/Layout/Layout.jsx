@@ -36,8 +36,8 @@ const Layout = () => {
             <Header/>
             <Sidebar/>
             <main
-            className={sideBarOpen ? 'main_sidebar_open' : 'main_sidebar_closed'}  
-            onClick={sidebarHandler}> 
+                className={sideBarOpen ? 'main_sidebar_open' : 'main_sidebar_closed'}  
+                onClick={sidebarHandler}> 
                 <ErrorBoundary>
                     <Outlet/>
                 </ErrorBoundary>   

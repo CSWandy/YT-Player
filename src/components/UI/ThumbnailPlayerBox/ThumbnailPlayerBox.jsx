@@ -6,7 +6,7 @@ import numeral from 'numeral';
 import apiRequest from '../../../utils/apiRequest';
 import useFetch from '../../../utils/useFetch';
 
-import './_thumbnailBox.scss';
+import './_thumbnailPlayerBox.scss';
 
 const Thumbnail = (props) => {
     const {

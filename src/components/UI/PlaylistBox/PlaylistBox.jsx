@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import ThumbnailBox from '../ThumbnailBox/ThumbnailBox';
+import ThumbnailBox from '../ThumbnailPlayerBox/ThumbnailPlayerBox';
 
 import apiRequest from '../../../utils/apiRequest';
 

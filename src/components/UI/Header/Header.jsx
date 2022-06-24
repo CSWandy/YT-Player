@@ -4,7 +4,7 @@ import { CSSTransition } from 'react-transition-group';
 
 import { AiOutlineSearch } from 'react-icons/ai';
 import { MdExitToApp } from 'react-icons/md';
-import logo from '../../../assets/icons/png/logo.png';
+import logo from '../../../assets/images/png/logo.png';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
 import { useGoogleLogin, googleLogout } from '@react-oauth/google';

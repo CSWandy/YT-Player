@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import moment from 'moment';
 import numeral from 'numeral';
 
+import ImgFailProne from '../ImgFailProne/ImgFailProne';
+
 import useHeightCalc from '../../../utils/useHeightCalc';
 import useFetch from '../../../utils/useFetch';
 import apiRequest from '../../../utils/apiRequest';
 
 import './_playerDesc.scss';
-import ImgFailProne from '../ImgFailProne/ImgFailProne';
 
 const PlayerDesc = ( { video } ) => {
 

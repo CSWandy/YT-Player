@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import errorImage from '../../../assets/icons/webp/error.webp';
+import errorImage from '../../../assets/images/webp/error.webp';
 
 import './_errorBoundary.scss';
 
