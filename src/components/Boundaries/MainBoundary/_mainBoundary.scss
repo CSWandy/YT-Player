@@ -1,0 +1,35 @@
+main {
+    margin-top: 55px; 
+  }
+  
+.main_sidebar {
+    &_open {
+        width: calc(100% - 245px);
+        transform: translateX(245px);
+        transition: all 1s 250ms;
+    }
+
+    &_closed {
+        width: 100%;
+        transition: all 1s 250ms;
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 1100px) {
+    .main_sidebar {
+        &_open {
+            width: calc(100% - 220px);
+            transform: translateX(220px);
+       }
+    }
+ }
+
+ @media (max-width: 768px) {
+    .main_sidebar {
+        &_open {
+            width: 100%;
+            transform: translateX(0px);
+        }
+    }
+ }

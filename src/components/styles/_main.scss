@@ -9,27 +9,13 @@
     &:focus {
         outline: 1px solid #DCE0E0;
     }
-
-    summary:focus {
-            outline: none;
-    }
- 
-    body {
-        margin: 0;
-        background-color: rgb(10, 10, 10);
-        color: $text-color;
-        font-family: "GOST_A";
-        box-sizing: border-box;
-        min-height: calc(100vh - 55px);
-        min-width:350px;
-    }
-
+    
     ::selection {
         background-color: $border-color;
         color: black;
     }
 
-    // Scrollbar
+      // Scrollbar
     &::-webkit-scrollbar {
         width: 14px;
         height: 18px;
@@ -49,7 +35,6 @@
         border-radius: 15px;
         border: 2px solid #0a0a0a;
 
-
         &:hover {
             background-color: rgb(102, 102, 102);
         }
@@ -58,6 +43,25 @@
     scrollbar-color: rgb(87, 87, 87) rgb(19, 19, 19);
     scrollbar-width: thin;
 }
+
+summary:focus {
+    outline: none;
+}
+
+body {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-x: clip;
+    margin: 0;
+    background-color: rgb(10, 10, 10);
+    color: $text-color;
+    font-family: "GOST_A";
+    min-width: 350px; 
+}
+
+main {
+    min-height: calc(100vh - 55px);
+} 
 
 h2 {
     margin: 0;
@@ -90,9 +94,7 @@ h2 {
         padding: 10px;
         font-size: 30px;
     }
-    .screen {      
-        &_horizontal { 
-            padding: 5px;
-        }
+    .screen_horizontal { 
+        padding: 5px;
     }
 }

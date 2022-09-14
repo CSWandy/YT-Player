@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import moment from 'moment';
 
+import ImgFallback from '../ImgFallback/ImgFallback';
+
 import './_commentItem.scss';
-import ImgFailProne from '../ImgFailProne/ImgFailProne';
 
 const CommentItem = ( { comment } ) => {
 
@@ -22,7 +23,7 @@ const CommentItem = ( { comment } ) => {
   return (
     <div className='player_comments_list_item'>
          <div className='player_comments_list_item_side'>
-            <ImgFailProne 
+            <ImgFallback 
                 src={authorProfileImageUrl}
                 alt='avatar'
                 className='player_comments_list_item_side_image' />
@@ -47,4 +48,4 @@ const CommentItem = ( { comment } ) => {
   )
 }
 
-export default CommentItem
+export default memo(CommentItem)

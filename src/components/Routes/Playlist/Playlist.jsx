@@ -1,47 +1,43 @@
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
-import ThumbnailPlaylist from '../../UI/ThumbnailPlaylist/ThumbnailPlaylist';
-import Thumbnail from '../../UI/Thumbnail/Thumbnail';
-import Spinner from '../../UI/Spinner/Spinner';
+import CardVideo from '../../UI/CardVideo/CardVideo'; 
+import CardPlaylist from '../../UI/CardPlaylist/CardPlaylist';
+import LoadingPlaceholder from '../../UI/LoadingPlaceholder/LoadingPlaceholder';
 
-import apiRequest from '../../../utils/apiRequest'; 
-import useFetch from '../../../utils/useFetch';
-import useSetTitle from '../../../utils/useSetTitle';
+import { pageUp } from '../../../utils/pageUp';
+import { getPlaylistDetails, getPlaylistItems } from '../../../API/requestListAPI';
+import useSetTitle from '../../../hooks/useSetTitle';
 
 const Playlist = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [Pl, setPl] = useState({});
-    const [vids, setVids ] = useState([]);
+    const [videoList, setVideoList ] = useState([]);
     const transitionNodeRef = useRef();
     const transitionNodeRef2 = useRef();
     const { setLayout } = useContext(LayoutContext);
     const { playlistId } = useParams();
+ 
+    useEffect(() => {
+        const async = async () => {
+            try {
+                pageUp();
+                setIsLoading(true);
+                const playlistDetails = await getPlaylistDetails(playlistId);
+                const PlaylistVideoList = await getPlaylistItems(playlistId);
+                setPl(playlistDetails.data.items[0]);
+                setVideoList(PlaylistVideoList.data.items); 
+                setIsLoading(false);
+            } catch(error) {
+                const message = error?.response?.data?.error?.message || error;
+                console.log(message);
+            }
+        };
+        async();
+    }, [playlistId]);
 
-    const doFetch = useCallback( async playlistId => {
-        const { data: { items } } = 
-            await apiRequest.get('/playlists', 
-                { params: {
-                    part: 'contentDetails,snippet',
-                    id: playlistId
-                    }
-                });
-
-        const PlVids = await apiRequest.get('/playlistItems', 
-            { params: {
-                part: 'snippet, contentDetails',
-                maxResults: 30,
-                playlistId:playlistId,
-                }
-            });
-        
-        setPl(items[0]);
-        setVids(PlVids.data.items); 
-    }, []);
-
-    useFetch(doFetch, [playlistId], setIsLoading, [playlistId], true);
     useSetTitle('playlist', Pl?.snippet?.localized?.title, [Pl], setLayout);
     
     return (
@@ -54,15 +50,15 @@ const Playlist = () => {
                         appear={true} 
                         nodeRef={transitionNodeRef}>  
                 <div ref={transitionNodeRef} className='transition_pos_abs'>
-                    <Spinner 
-                            qty={1} 
-                            parent={"ThumbnailPlaylist"}
-                            type='playlist' 
+                    <LoadingPlaceholder 
+                            quantity={1} 
+                            placeholderType='CardPlaylist'
+                            subType='playlist' 
                             key="spinner_playlist"/>
-                    <Spinner 
-                            qty={6}
-                            parent={"Thumbnail"}
-                            type='horizontal'
+                    <LoadingPlaceholder 
+                            quantity={6}
+                            placeholderType='CardVideo'
+                            subType='horizontal'
                             key="spinner_videos"/>
                 </div>  
             </CSSTransition>
@@ -73,20 +69,18 @@ const Playlist = () => {
                         unmountOnExit 
                         nodeRef={transitionNodeRef2}> 
                 <div ref={transitionNodeRef2} >
-                    <ThumbnailPlaylist  
-                                    object={Pl}
-                                    type='playlist'
-                                    key={Pl.id}
-                                    activeLink={false}
-                                    lines={7} />
-                    {vids.map(video => (
-                    <Thumbnail  
-                            video={video}
-                            key={video.snippet.resourceId.videoId}
-                            type="horizontal"
-                            idSrc="snippet" 
-                            plId={playlistId}/>))}
-
+                    <CardPlaylist  
+                                object={Pl}
+                                key={Pl.id}
+                                activeLink={false}
+                                lines={7} />
+                    {videoList.map(video => (
+                        <CardVideo  
+                                video={video}
+                                key={video.snippet.resourceId.videoId}
+                                layout="horizontal"
+                                idSrc="snippet" 
+                                playlistId={playlistId}/>))}
                 </div>
             </CSSTransition>
         </div>

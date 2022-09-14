@@ -1,4 +1,4 @@
-function calculateLines(text, lineGoal, nodeWidth, fontSize) {
+function textHeightCalc(text, lineGoal, nodeWidth, fontSize) {
     
     if (text === undefined || text.length === 0) {
         return 0
@@ -53,4 +53,4 @@ function calculateLines(text, lineGoal, nodeWidth, fontSize) {
     return lastSpaceIndex + 1 
   }
 
-  export default  calculateLines
+  export default textHeightCalc

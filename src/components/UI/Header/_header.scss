@@ -9,6 +9,8 @@
 
    height: 55px;
    width: 100%;
+   overflow: hidden;
+   overflow: clip;
    min-width: 350px;
    background-color: $black-primary;
 
@@ -24,11 +26,10 @@
       width: 100%;
 
       &_logo {  
-         cursor: pointer;
          margin: auto;
          height: 50px;
          width: 50px;
-
+         cursor: pointer;
       }
 
       &_title {
@@ -132,48 +133,7 @@
       }
    }
 }
-
-.login_modal {
-   position: fixed;
-   left: 50%;
-   top: 40%;
-   transform: translate(-50%, -50%);
-   z-index: 999;
-   display: none;
-   
-   font-size: 50px;
-   font-family: Cooper-black;
-   padding: 50px;
-   background-color: rgb(8, 8, 8);
-   box-shadow: rgba(199, 199, 199, 0.2) 0px 19px 38px, 
-               rgba(199, 199, 199, 0.22) 0px 15px 12px;
-   border: 1px inset rgb(68, 68, 68);
-
-   &_transition,
-   &_transition-appear {
-      &-enter {
-         display: block;
-         opacity: 0;
-      }
-      
-      &-enter-active {
-         display: block;
-         animation: appear 1s ease 2 alternate;
-         @keyframes appear {
-            from {
-               opacity: 0;
-            }
-            to {
-               opacity: 1;
-            }
-         }
-      }
-      
-      &-enter-done {
-         display: none;
-      }
-   }
-}
+ 
 
 @media (max-width: 1700px) {
    .header {  

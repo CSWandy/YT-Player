@@ -1,0 +1,81 @@
+.placeholder {
+    &_instance.default {
+        display: block;
+        margin: auto;
+        width:  120px;
+        height: 120px;
+        object-fit: contain; 
+        transform-origin: 50% 55%;
+        animation: rotateSpinner 3s linear infinite;
+    }
+}
+
+.spinner_rotation {
+    animation: rotateSpinner 2250ms linear infinite;
+
+    @keyframes rotateSpinner {
+        from {transform: translateY(-5px) rotate(0deg);}
+        to   {transform: translateY(-5px) rotate(360deg);}
+    }
+
+    @for $i from 1 through 16 {
+        &_#{$i} {
+        transform: rotate($i * 180deg + 45deg);
+        }
+    }
+}
+
+.scribble {
+    font-family: Redacted-script;
+}
+
+.transition {
+    &-enter {
+        opacity: 0;
+    }
+
+    &-enter-active {
+        opacity: 1;
+        transition: opacity 800ms 1300ms;
+    }
+
+    &-exit {
+        opacity: 1;
+    }
+
+    &-exit-active {
+        opacity: 0;
+        transition: opacity 1400ms;
+      }
+
+      &_pos_abs {
+        width: 100%; 
+        position: absolute;
+      }
+
+    &_spinner,
+    &_spinner-appear {
+        
+        &-enter {
+            position: absolute;
+            opacity: 0;
+        }
+
+        &-enter-active {
+            position: absolute;
+            opacity: 1;
+            transition: opacity 1650ms;
+        }
+
+        &-exit {
+            position: absolute;
+            opacity: 1;
+        }
+        
+        &-exit-active {
+            position: absolute;
+            opacity: 0;
+            transition: opacity 1650ms;
+        }
+    }
+}

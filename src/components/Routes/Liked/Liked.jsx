@@ -1,35 +1,38 @@
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
-import Thumbnail from '../../UI/Thumbnail/Thumbnail';
-import Spinner from '../../UI/Spinner/Spinner';
+import CardVideo from '../../UI/CardVideo/CardVideo';
+import LoadingPlaceholder from '../../UI/LoadingPlaceholder/LoadingPlaceholder';
 
-import apiRequest from '../../../utils/apiRequest';
-import useFetch from '../../../utils/useFetch';
-import useSetTitle from '../../../utils/useSetTitle';
+import { pageUp } from '../../../utils/pageUp';
+import { getLikedVideoDetails } from '../../../API/requestListAPI';
+import useSetTitle from '../../../hooks/useSetTitle';
 
 const Liked = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [vids, setVids ] = useState([]);
     const transitionNodeRef = useRef();
     const transitionNodeRef2 = useRef();
-    const { layout: { menuActive }, setLayout } = useContext(LayoutContext);
-
-    const doFetch = useCallback( async () => {
-        const { data: { items } } = 
-                await apiRequest.get('/videos', 
-                    { params: {
-                        part: 'contentDetails,statistics,snippet',
-                        maxResults: 15, 
-                        myRating: 'like'},
-                    withToken: true });
-
-        setVids(items); 
-    }, []);
+    const { layout: { loggedIn }, setLayout } = useContext(LayoutContext);
+ 
+    useEffect(() => {
+        const async = async () => {
+            try {
+                pageUp();
+                setIsLoading(true);
+                const { data: { items } } = await getLikedVideoDetails();
+                setVids(items); 
+                setIsLoading(false);
+            } catch(error) {
+                const message = error?.response?.data?.error?.message || error;
+                console.log(message);
+            }
+        };
+        async();
+    }, [loggedIn]);
 
     useSetTitle('liked', '', [], setLayout);
-    useFetch(doFetch, [], setIsLoading, [menuActive], true);
 
     return ( 
     <>
@@ -42,10 +45,10 @@ const Liked = () => {
                     appear={true} 
                     nodeRef={transitionNodeRef}>  
             <div ref={transitionNodeRef} className='transition_pos_abs'>
-                <Spinner 
-                        qty={10}
-                        parent={"Thumbnail"}
-                        type='grid'/>
+                <LoadingPlaceholder 
+                        quantity={10}
+                        placeholderType='CardVideo'
+                        subType='grid'/>
             </div>  
         </CSSTransition>
         <CSSTransition  
@@ -56,10 +59,10 @@ const Liked = () => {
                     nodeRef={transitionNodeRef2}> 
             <div ref={transitionNodeRef2} className='screen_grid'>
                 {(vids?.map(video => 
-                    (<Thumbnail 
+                    (<CardVideo 
                             video={video}
                             key={video.id}
-                            type="grid" />))) }
+                            layout="grid" />))) }
 
             </div>
         </CSSTransition>

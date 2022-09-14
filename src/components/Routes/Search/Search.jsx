@@ -1,130 +1,101 @@
-import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { CSSTransition } from 'react-transition-group';
 
-import ThumbnailPlaylist from '../../UI/ThumbnailPlaylist/ThumbnailPlaylist';
-import Thumbnail from '../../UI/Thumbnail/Thumbnail';
-import Spinner from '../../UI/Spinner/Spinner';
+import CardPlaylist from '../../UI/CardPlaylist/CardPlaylist';
+import CardVideo from '../../UI/CardVideo/CardVideo';
+import LoadingPlaceholder from '../../UI/LoadingPlaceholder/LoadingPlaceholder';
 import { LayoutContext } from '../../../contexts/LayoutContext';
 
-import useSetTitle from '../../../utils/useSetTitle';
-import useFetch from '../../../utils/useFetch';
-import apiRequest from '../../../utils/apiRequest';
-import throttle from '../../../utils/throttle';
+import { getSearchResults } from '../../../API/requestListAPI';
+import { pageUp } from '../../../utils/pageUp';
+import useSetTitle from '../../../hooks/useSetTitle';
 
-const Search = () => {
-
+const Search = () => { 
     const { query } = useParams();
-    const [searchRes, setSearchRes] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [nextPage, setNextPage] = useState('');
-    const [isLastPage, setIsLastPage] = useState(false);
-    const [fireFetch, setFireFetch] = useState(false);
-    const transitionNodeRef = useRef();
-    const transitionNodeRef2 = useRef();
-    const { layout: { menuActive }, setLayout } = useContext(LayoutContext);
-        
-    const doFetchFirst = useCallback( async query => {
-        const { data } = 
-            await apiRequest.get('/search', {
-                params: {
-                    part: 'snippet',
-                    type:'video,channel,playlist',
-                    maxResults: 16,
-                    q: query, 
-                }
-            });
-        
-        if (data.nextPageToken) {
-            setNextPage(data.nextPageToken);
-        } else {
-            setNextPage('');
-            setIsLastPage(true);
-        }
-
-        setSearchRes(data.items);
-        setFireFetch(false);
-    }, []);
+    const [searchResult, setSearchResult] = useState({ items: [], nextPageToken: '' });
+    const [isLoading, setIsLoading] = useState(true); 
+    const lastQuery = useRef(query); 
+    const paginationObserver = useRef(); 
+    const { setLayout } = useContext(LayoutContext);
     
-    const doFetchPage = useCallback( async (query, nextPage) => {
-        if (fireFetch && !isLastPage) {
-            const { data } = 
-                await apiRequest.get('/search', {
-                    params: {
-                        part: 'snippet',
-                        type:'video,channel,playlist',
-                        maxResults: 16,
-                        q: query, 
-                        pageToken: nextPage,
-                    }
+    const searchHandler = async () => {
+        try {
+            setIsLoading(true);
+            const searchResponse = await getSearchResults(query, searchResult.nextPageToken); 
+            if (lastQuery.current === query) {
+                const nextPageToken = searchResponse.data.nextPageToken;
+                const itemsMerge = [...searchResult.items, ...searchResponse.data.items];
+                // for some reason API returns duplicate items sometimes - so filtering duplicants
+                const idMap = itemsMerge.map(item => item.id.playlistId || item.id.videoId || item.id.channelId);
+                const items = itemsMerge.filter((item, index) => {
+                    const id = item.id.playlistId || item.id.videoId || item.id.channelId;
+                    return !idMap.includes(id, index + 1);
                 });
-            
-            setSearchRes([...searchRes, ...data.items]);
-            if (data.nextPageToken) {
-                setNextPage(data.nextPageToken);
+                setSearchResult({ items, nextPageToken });
             } else {
-                setNextPage('');
-                setIsLastPage(true);
+                lastQuery.current = query;
+                setSearchResult(searchResponse.data);
             }
-            setFireFetch(false);
-        } 
-    }, [fireFetch, isLastPage, searchRes]);
-
-    useSetTitle('search', query, [query], setLayout);
-    useFetch(doFetchFirst, [query], setIsLoading, [query, menuActive]);
-    useFetch(doFetchPage, [query, nextPage], setIsLoading, [fireFetch]);
-
-    useEffect( () =>  { 
-        document.addEventListener('scroll',  scrollHandler);
-        return () => document.removeEventListener('scroll', scrollHandler)
-    }, []);
-
-    const scrollHandler = useCallback( throttle(function(e) {
-        console.log('handling');
-        if((e.target.documentElement.scrollHeight - 
-            (e.target.documentElement.scrollTop + window.innerHeight) < 50)) {
-                setFireFetch(true);
+            setIsLoading(false);
+        } catch(error) {
+            const message = error?.response?.data?.error?.message || error;
+            console.log(message);
         }
-    }, 2000), []);
+    };
+
+    useEffect(() => {
+        pageUp();
+        searchHandler();
+    }, [query]);
+
+    // scroll pagination Intersection observer
+    const lastNode = useCallback(lastNode => {
+        if (isLoading || !searchResult.nextPageToken) return
+        if (paginationObserver.current) paginationObserver.current.disconnect(); 
+        paginationObserver.current = 
+            new IntersectionObserver(entries => {
+                if (entries[0].isIntersecting) searchHandler();
+            });
+        if (lastNode) paginationObserver.current.observe(lastNode);
+    }, [isLoading]); 
+    
+    useSetTitle('search', query, [query], setLayout);
+
+    const resultsListJSX = useMemo(() => {  
+        return ( 
+            searchResult.items.map((searchItem, index, array) => { 
+                let card;
+                let key;
+                if (searchItem.id.kind === 'youtube#playlist') {
+                    key = searchItem.id.playlistId;
+                    card = 
+                        <CardPlaylist  
+                            object={searchItem}
+                            key={key}
+                            lines={8}
+                            searchScreen/>
+                } else {
+                    key = searchItem.id.videoId || searchItem.id.channelId;
+                    card = 
+                        <CardVideo 
+                            video={searchItem}
+                            key={key}
+                            layout="horizontal" 
+                            channel = {!!searchItem.id.channelId}/> 
+                }
+                const isLast = (index === array.length - 1); 
+                if (isLast) return <div ref={lastNode} key={key}> {card} </div>  
+                return card
+            })
+        )
+    }, [searchResult]);  
 
     return (
         <div className='screen_horizontal'>
             <h2>Results for: {query}</h2>
-            <CSSTransition  
-                        in={isLoading} 
-                        timeout={2100} 
-                        classNames="transition_spinner" 
-                        unmountOnExit 
-                        appear={true} 
-                        nodeRef={transitionNodeRef}>  
-                <div ref={transitionNodeRef} className='transition_pos_abs'>
-                    <Spinner 
-                            qty={10}
-                            parent={"Thumbnail"}
-                            type='horizontal'/>
-                </div>  
-            </CSSTransition>
-            <CSSTransition  
-                        in={!isLoading} 
-                        timeout={2100} 
-                        classNames="transition" 
-                        unmountOnExit 
-                        nodeRef={transitionNodeRef2}> 
-                <div ref={transitionNodeRef2} >
-                    {searchRes.map(searchItem => { return (
-                        (searchItem.id.kind === 'youtube#playlist')?
-                        <ThumbnailPlaylist  
-                                        object={searchItem}
-                                        type='playlist'
-                                        key={searchItem.id.playlistId}
-                                        lines={8}
-                                        searchScreen/>
-                        :<Thumbnail video={searchItem}
-                                    key={searchItem.id.videoId || searchItem.id.channelId}
-                                    type="horizontal" 
-                                    modifier = {searchItem.id.channelId? ("_channel") : ''}/> )})}
-                </div>
-            </CSSTransition>
+            {resultsListJSX}
+            {isLoading &&
+            <LoadingPlaceholder quantity={4} placeholderType='CardVideo' subType='horizontal'/> }
         </div>
     )
 }

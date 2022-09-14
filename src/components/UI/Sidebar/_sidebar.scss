@@ -9,10 +9,10 @@ $fadeTime: 500ms;
    
    width: 245px;
    height: 100vh;
-   padding-top: 20px;
+   padding-top: 10px;
    
    position: fixed;
-   top: 45px;
+   top: 55px;
    left: 0;   
    z-index: 99;
 
@@ -51,7 +51,7 @@ $fadeTime: 500ms;
       }
 
       &_dropdown {
-         background: no-repeat url(../../../assets/images/png/expand_single.png) 50% 55%;
+         background: no-repeat url('../../../assets/images/png/expand_single.png') 50% 55%;
          background-size: 17px;
          display: grid;
          place-content: center;

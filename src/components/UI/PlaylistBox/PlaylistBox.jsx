@@ -1,70 +1,48 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 
-import ThumbnailBox from '../ThumbnailPlayerBox/ThumbnailPlayerBox';
+import CardPlayerBox from '../CardPlayerBox/CardPlayerBox';
 
-import apiRequest from '../../../utils/apiRequest';
+import { getPlaylistItems, getRelatedVideos } from '../../../API/requestListAPI';
 
 import './_playlistBox.scss';
 
-const PlaylistBox = ( { plId, vidId }) => {
-
+const PlaylistBox = ( { playlistId, videoId }) => {
     const [isLoading, setIsLoading] = useState(true);
-    const [curPl, setCurPl] = useState({});
+    const [currentPlaylst, setCurrentPlaylst] = useState({});
 
     useEffect(() => {
-        setIsLoading(true);  
-         
-        const fetchPl = async plId => {
-            const { data: { items } } = 
-                await apiRequest.get('/playlistItems', 
-                    { params: {
-                        part: 'snippet, contentDetails',
-                        maxResults: 20,
-                        playlistId: plId,
-                        }
-            });
-             
-            setCurPl(items);
-            setIsLoading(false); 
+        const async = async () => {
+            try {
+                setIsLoading(true);
+                let relatedVideos = [];
+                (playlistId !== '') ?
+                relatedVideos = await getPlaylistItems(playlistId)
+                :relatedVideos = await getRelatedVideos(videoId);
+                setCurrentPlaylst(relatedVideos.data.items);
+                setIsLoading(false);
+            } catch(error) {
+                const message = error?.response?.data?.error?.message || error;
+                console.log(message);
+            }
         };
-
-        const fetchRel = async vidId => {
-            const { data: { items } } = 
-                await apiRequest.get('/search', 
-                    { params: {
-                        part: 'snippet',
-                        maxResults: 20,
-                        relatedToVideoId: vidId,
-                        type: 'video,'
-                        }
-            });
-
-            setCurPl(items);
-            setIsLoading(false); 
-        };
-
-        (plId !== '') ?
-        fetchPl(plId)
-        :fetchRel(vidId);
-    }, [plId]);
+        async();
+    }, []);
 
   return (
     !isLoading && 
     <div className='playlist_box'>
         <div className='playlist_box_scrollOffset'>
-            {curPl?.map(video => {
-                if (video.snippet) {
-                    return (
-                        <ThumbnailBox  
-                                    video={video}
-                                    key={(plId !== '') ? video.snippet.resourceId.videoId : video.id.videoId}
-                                    idSrc={(plId !== '') ? 'snippet' : ''} 
-                                    plId={plId}/>)
-                }
+            {currentPlaylst?.map(video => {
+                if (video.snippet) return (
+                    <CardPlayerBox  
+                        video={video}
+                        key={(playlistId !== '') ? video.snippet.resourceId.videoId : video.id.videoId}
+                        idSrc={(playlistId !== '') ? 'snippet' : ''} 
+                        playlistId={playlistId}/>)
             })}
         </div>
     </div>
   )
 }
 
-export default PlaylistBox
+export default memo(PlaylistBox)

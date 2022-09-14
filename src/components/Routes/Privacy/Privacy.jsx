@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { LayoutContext } from '../../../contexts/LayoutContext';
-import useSetTitle from '../../../utils/useSetTitle';
+import useSetTitle from '../../../hooks/useSetTitle';
 
 import './_privacy.scss';
 

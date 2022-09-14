@@ -4,11 +4,10 @@ const initialState = {
     menuActive:'',
     sideBarOpen: true,
     plDropDownOpen: false,
-    loggedIn: false,
+    loggedIn: true,
 };
 
 export const LayoutContext = createContext(initialState);
-
     
 export const LayoutProvider = ({ children }) => {
     const [layout, setLayout] = useState(initialState);

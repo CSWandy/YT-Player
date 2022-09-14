@@ -1,53 +1,53 @@
-import { useState, useContext, useRef, useCallback } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
-import ChannelScreenHeader from '../../UI/ChannelScreenHeader/ChannelScreenHeader';
-import Thumbnail from '../../UI/Thumbnail/Thumbnail';
-import Spinner from '../../UI/Spinner/Spinner';
+import ChannelPageHeader from '../../UI/ChannelPageHeader/ChannelPageHeader';
+import CardVideo from '../../UI/CardVideo/CardVideo';
+import LoadingPlaceholder from '../../UI/LoadingPlaceholder/LoadingPlaceholder';
 
-import useSetTitle from '../../../utils/useSetTitle';
-import useFetch from '../../../utils/useFetch';
-import apiRequest from '../../../utils/apiRequest';
+import useSetTitle from '../../../hooks/useSetTitle';
+import { getChannelDetails, getPlaylistItems } from '../../../API/requestListAPI';
+import { pageUp } from '../../../utils/pageUp';
 
 const Channel = () => {
     const { channelId } = useParams();
     const [isLoading, setIsLoading] = useState(true);
     const [channelItem, setChannelItem] = useState();
-    const [vids, setVids ] = useState([]);
+    const [videoList, setVideoList ] = useState([]);
     const transitionNodeRef = useRef();
     const transitionNodeRef2 = useRef();
     const { setLayout } = useContext(LayoutContext);
-    
-    const doFetch = useCallback( async channelId => {
-        const { data: { items } } = 
-            await apiRequest.get('/channels', 
-                { params: {
-                    part: 'snippet,contentDetails,statistics',
-                    id: channelId
-                    }
-                });
 
-        setChannelItem(items[0]);
-        const channelPlId = (items[0].contentDetails.relatedPlaylists.uploads);
-        const { data } = await apiRequest.get('playlistItems', 
-            { params: {
-                    part: 'snippet, contentDetails',
-                    maxResults: 30,
-                    playlistId:channelPlId,
-                    }
-            });
+    useEffect(() => {
+        const async = async () => {
+            try {
+                pageUp();
+                setIsLoading(true);
 
-        setVids(data.items); 
-    }, []);
+                const channel = await getChannelDetails(channelId);
+                const channelItem = channel.data.items[0];
+                setChannelItem(channelItem);
+                
+                const channelPlId = (channelItem.contentDetails.relatedPlaylists.uploads);
+                const channelPl = await getPlaylistItems(channelPlId);
+                setVideoList(channelPl.data.items); 
 
-    useFetch(doFetch, [channelId], setIsLoading, [channelId], true);
+                setIsLoading(false);
+            } catch(error) {
+                const message = error?.response?.data?.error?.message || error;
+                console.log(message);
+            }
+        };
+        async();
+    }, [channelId]);
+
     useSetTitle('channel', channelItem?.snippet?.title, [channelItem], setLayout);
 
     return (
         <>
-            <ChannelScreenHeader channelItem={channelItem} channelId={channelId}/>
+            <ChannelPageHeader channelItem={channelItem} channelId={channelId}/>
             <CSSTransition  
                         in={isLoading} 
                         timeout={2100} 
@@ -56,10 +56,10 @@ const Channel = () => {
                         appear={true} 
                         nodeRef={transitionNodeRef}>  
                 <div ref={transitionNodeRef} className='transition_pos_abs'>
-                    <Spinner 
-                        qty={10}
-                        parent={"Thumbnail"}
-                        type='grid'/>
+                    <LoadingPlaceholder 
+                        quantity={10}
+                        placeholderType='CardVideo'
+                        subType='grid'/>
                 </div>  
             </CSSTransition>
             <CSSTransition  
@@ -69,12 +69,12 @@ const Channel = () => {
                         unmountOnExit 
                         nodeRef={transitionNodeRef2}> 
                 <div ref={transitionNodeRef2} className='screen_grid'> 
-                    {vids.map(video => 
-                        (<Thumbnail video={video}
+                    {videoList.map(video => 
+                        (<CardVideo video={video}
                                     key={video.snippet.resourceId.videoId}
-                                    type="grid"
+                                    layout="grid"
                                     idSrc="snippet"
-                                    plId={channelItem.contentDetails.relatedPlaylists.uploads}
+                                    playlistId={channelItem.contentDetails.relatedPlaylists.uploads}
                                     showChannel={false}/>))}
                 </div>
             </CSSTransition>

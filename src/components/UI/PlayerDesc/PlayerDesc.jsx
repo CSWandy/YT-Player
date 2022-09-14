@@ -1,13 +1,13 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { memo, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import moment from 'moment';
 import numeral from 'numeral';
 
-import ImgFailProne from '../ImgFailProne/ImgFailProne';
+import { WindowSizeContext } from '../../../contexts/WindowSizeContext';
+import ImgFallback from '../ImgFallback/ImgFallback';
 
-import useHeightCalc from '../../../utils/useHeightCalc';
-import useFetch from '../../../utils/useFetch';
-import apiRequest from '../../../utils/apiRequest';
+import useHeightCalc from '../../../hooks/useHeightCalc';
+import { getChannelDetails } from '../../../API/requestListAPI';
 
 import './_playerDesc.scss';
 
@@ -32,22 +32,31 @@ const PlayerDesc = ( { video } ) => {
     const [isLoading, setIsLoading] = useState(true);
     const textNode = useRef();
     const navigate = useNavigate();
+    const { windowWidth } = useContext(WindowSizeContext);
 
-    const doFetch = useCallback( async channelId => {
-        const { data: { items } } = 
-            await apiRequest.get('/channels', {
-                params: {
-                    part: 'snippet,statistics',
-                    id: channelId,
-                }
-        });
-
-        setChannel(items[0]);
+    useEffect(() => {
+        const async = async () => {
+            try {
+                setIsLoading(true);
+                const channelDetails = await getChannelDetails(channelId);
+                setChannel(channelDetails.data.items[0]);
+                setIsLoading(false);
+            } catch(error) {
+                const message = error?.response?.data?.error?.message || error;
+                console.log(message);
+            }
+        };
+        async();
     }, []);
 
-    useFetch(doFetch, [channelId], setIsLoading, []);
-
-    useHeightCalc(textNode, setDescDivider, description, 'horizontal', [video], 18);
+    useHeightCalc({
+        textNode, 
+        setDescDivider, 
+        description, 
+        type: 'horizontal', 
+        dependencies: [video, windowWidth], 
+        fontSize: 18
+    });
 
     const goToChannel = () => {
         navigate(`/channel/${channelId}`);
@@ -72,7 +81,7 @@ const PlayerDesc = ( { video } ) => {
             </div>
         
             <div className={'player_desc_channel'}>
-                <ImgFailProne  
+                <ImgFallback  
                     className='player_desc_channel_image' 
                     src={channel?.snippet?.thumbnails?.default?.url} 
                     alt="channel thumbnail" 
@@ -97,4 +106,4 @@ const PlayerDesc = ( { video } ) => {
     )
 }
 
-export default PlayerDesc
+export default memo(PlayerDesc)

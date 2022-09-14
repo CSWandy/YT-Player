@@ -1,0 +1,33 @@
+.login_modal {
+    position: fixed;
+    width: MIN(80%, 600px);
+    padding: MIN(4vw, 50px);
+    left: 50%;
+    top: 40vh;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    
+    text-align: center;
+    font-size: MIN(5vw, 50px);
+    font-family: Cooper-black;
+    background-color: rgb(8, 8, 8);
+    box-shadow: rgba(199, 199, 199, 0.2) 0px 19px 38px, 
+                rgba(199, 199, 199, 0.22) 0px 15px 12px;
+    border: 1px inset rgb(68, 68, 68);
+    animation: show 1s;
+
+    @keyframes show {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    &_sign-in:hover {
+        color: rgb(203, 224, 217);
+        text-decoration: underline;
+        cursor: pointer;
+    }
+ }

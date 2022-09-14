@@ -1,36 +1,39 @@
-import React, { useState, useRef, useContext, useCallback } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import { LayoutContext } from '../../../contexts/LayoutContext';
-import Thumbnail from '../../UI/Thumbnail/Thumbnail';
-import Spinner from '../../UI/Spinner/Spinner';
+import CardVideo from '../../UI/CardVideo/CardVideo';
+import LoadingPlaceholder from '../../UI/LoadingPlaceholder/LoadingPlaceholder';
 
-import apiRequest from '../../../utils/apiRequest';
-import useFetch from '../../../utils/useFetch';
-import useSetTitle from '../../../utils/useSetTitle';
+import { getVideoDetails } from '../../../API/requestListAPI';
+import useSetTitle from '../../../hooks/useSetTitle';
+import { pageUp } from '../../../utils/pageUp';
 
 const History = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [vids, setVids] = useState([]);
     const nodeRef = useRef();
     const nodeRef2 = useRef();
-    const { layout: { menuActive }, setLayout } = useContext(LayoutContext);
-    const history = localStorage.getItem('history').split(',').filter(id => (id !== 'undefined'));
+    const { setLayout } = useContext(LayoutContext);
+    const history = JSON.parse(localStorage.getItem('history'));
 
-
-    const doFetch = useCallback( async history => {
-        const { data } = await apiRequest.get('/videos', {
-            params: {
-                part: 'contentDetails,statistics,snippet',
-                id: history.slice(0, 15).join(',')
+    useEffect(() => {
+        const async = async () => {
+            try {
+                pageUp();
+                setIsLoading(true);
+                const { data } = await getVideoDetails(history.slice(0, 15).join());
+                setVids(data.items);
+                setIsLoading(false);
+            } catch(error) {
+                const message = error?.response?.data?.error?.message || error;
+                console.log(message);
             }
-        });
-
-        setVids(data.items);
+        };
+        async();
     }, []);
 
     useSetTitle('history', '', [], setLayout);
-    useFetch(doFetch, [history], setIsLoading, [menuActive], true);
 
     return (
     <div className='screen_horizontal'> 
@@ -42,10 +45,10 @@ const History = () => {
                     unmountOnExit 
                     nodeRef={nodeRef}>   
             <div ref={nodeRef} className='transition_pos_abs'>
-                <Spinner 
-                        qty={4}
-                        parent={"Thumbnail"}
-                        type='horizontal' />
+                <LoadingPlaceholder 
+                        quantity={4}
+                        placeholderType='CardVideo'
+                        subType='horizontal' />
             </div>      
         </CSSTransition >
         <CSSTransition  
@@ -56,10 +59,10 @@ const History = () => {
                     nodeRef={nodeRef2}> 
             <div ref={nodeRef2}>
                 {vids.map((video, index) => 
-                    (<Thumbnail 
+                    (<CardVideo 
                             video={video}
                             key={video.id+index}
-                            type="horizontal" />))}
+                            layout="horizontal" />))}
             </div> 
         </CSSTransition >
     </div>

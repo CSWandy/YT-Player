@@ -1,46 +1,43 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import ThumbnailPlaylistMini from '../ThumbnailPlaylistMini/ThumbnailPlaylistMini';
 import { LayoutContext } from '../../../contexts/LayoutContext'; 
 
-import apiRequest from '../../../utils/apiRequest';
-import useFetch from '../../../utils/useFetch';
+import { getPlaylistDetails } from '../../../API/requestListAPI';
+
+import {
+    MdSubscriptions,
+    MdThumbUp,
+    MdHistory,
+    MdLibraryBooks 
+} from 'react-icons/md';
 
 import './_sidebar.scss';
 
-import {
-   MdSubscriptions,
-   MdThumbUp,
-   MdHistory,
-   MdLibraryBooks,
-   // MdExitToApp,
-   // MdHome,
-   // MdSentimentDissatisfied,
-} from 'react-icons/md';
-
 const Sidebar = () => {
-   
     const [isLoading, setIsLoading] = useState(true);
     const [plData, setPlData] = useState([]);
     const [plFiltered, setPlFiltered] = useState(plData);
     const [filter, setFilter] = useState('');
-    const { layout:{ sideBarOpen, plDropDownOpen }, setLayout } = useContext(LayoutContext);
-    const savedPl = localStorage.getItem('savedPlaylists');
+    const { layout: { sideBarOpen, plDropDownOpen }, setLayout } = useContext(LayoutContext);
+    const savedPl = JSON.parse(localStorage.getItem('savedPlaylists')).join();
 
-    const doFetch = useCallback( async PlIds => {
-        const { data: { items } } = 
-            await apiRequest.get('/playlists', 
-            { params: { 
-                part: 'contentDetails,snippet',
-                id: PlIds}
-            });
-            
-        setPlData(items);
-        setPlFiltered(items);
-    }, []);
-
-    useFetch(doFetch, [savedPl], setIsLoading, [savedPl], false, true);
+    useEffect(() => {
+        const async = async () => {
+            try {
+                setIsLoading(true);
+                const { data: { items } } = await getPlaylistDetails(savedPl);
+                setPlData(items);
+                setPlFiltered(items);
+                setIsLoading(false);
+            } catch(error) {
+                const message = error?.response?.data?.error?.message || error;
+                console.log(message);
+            }
+        };
+        async();
+    }, [savedPl]);
 
     const dropDownHandler = e => {
         e.preventDefault();
